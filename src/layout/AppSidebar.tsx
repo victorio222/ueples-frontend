@@ -115,14 +115,14 @@ const AppSidebar: React.FC = () => {
     index: number;
   } | null>(null);
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {}
+    {},
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // const isActive = (path: string) => location.pathname === path;
   const isActive = useCallback(
     (path: string) => location.pathname === path,
-    [location.pathname]
+    [location.pathname],
   );
 
   useEffect(() => {
@@ -304,8 +304,8 @@ const AppSidebar: React.FC = () => {
           isExpanded || isMobileOpen
             ? "w-[290px]"
             : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
+              ? "w-[290px]"
+              : "w-[90px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
@@ -313,34 +313,38 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${
-          !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-        }`}
+        className={`py-8 flex justify-center`}
       >
         <Link to="/">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
-              <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
-              <img
-                className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
-                alt="Logo"
-                width={150}
-                height={40}
-              />
+              <div className="dark:hidden w-full flex flex-col items-center justify-center gap-2">
+                <img
+                  className="dark:hidden"
+                  src="/images/logo/uep-logo.png"
+                  alt="Logo"
+                  width={70}
+                  height={70}
+                />
+                <h1 className="text-lg font-semibold text-slate-700">UEP Student Records</h1>
+              </div>
+              <div className="dark:dark w-full flex flex-col items-center justify-center gap-2">
+                <img
+                  className="hidden dark:block"
+                  src="/images/logo/uep-logo.png"
+                  alt="Logo"
+                  width={70}
+                  height={70}
+                />
+                <h1 className="text-lg hidden dark:block font-semibold text-brand-50">UEP Student Records</h1>
+              </div>
             </>
           ) : (
             <img
-              src="/images/logo/logo-icon.svg"
+              src="/images/logo/uep-logo.png"
               alt="Logo"
-              width={32}
-              height={32}
+              width={52}
+              height={52}
             />
           )}
         </Link>
@@ -349,6 +353,10 @@ const AppSidebar: React.FC = () => {
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
+              <div>
+                <div className="dark:hidden border w-full mb-5"></div>
+                <div className="hidden dark:block border border-gray-400 w-full mb-5"></div>
+              </div>
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
                   !isExpanded && !isHovered
