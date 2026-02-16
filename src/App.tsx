@@ -12,12 +12,14 @@ import Buttons from "./pages/UiElements/Buttons";
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import UserTables from "./pages/UserManagement/Users";
+import UploadAttachment from "./pages/UploadDocuments/Attachments";
+import FormFolder from "./pages/Form137/FormFolder";
 
 export default function App() {
   return (
@@ -38,7 +40,9 @@ export default function App() {
             <Route path="/form-elements" element={<FormElements />} />
 
             {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
+            <Route path="/users" element={<UserTables />} />
+            <Route path="/upload-documents" element={<UploadAttachment />} />
+            <Route path="/form-137" element={<FormFolder />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
