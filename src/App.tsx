@@ -20,6 +20,7 @@ import Home from "./pages/Dashboard/Home";
 import UserTables from "./pages/UserManagement/Users";
 import UploadAttachment from "./pages/UploadDocuments/Attachments";
 import FormFolder from "./pages/Form137/FormFolder";
+import ArchiveTables from "./pages/Archive/ArchiveForm";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="/users" element={<UserTables />} />
             <Route path="/upload-documents" element={<UploadAttachment />} />
             <Route path="/form-137" element={<FormFolder />} />
+            <Route path="/archive/:year" element={<ArchiveTables />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />

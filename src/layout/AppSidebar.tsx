@@ -6,6 +6,8 @@ import {
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
+  DocsIcon,
+  FolderIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
@@ -14,6 +16,7 @@ import {
   PlugInIcon,
   TableIcon,
   UserCircleIcon,
+  UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 // import SidebarWidget from "./SidebarWidget";
@@ -33,17 +36,17 @@ const navItems: NavItem[] = [
     // subItems: [{ name: "Ecommerce", path: "/", pro: false }],
   },
   {
-    icon: <CalenderIcon />,
+    icon: <UserIcon />,
     name: "User Management",
     path: "/users",
   },
   {
-    icon: <CalenderIcon />,
+    icon: <DocsIcon />,
     name: "Upload Documents",
     path: "/upload-documents",
   },
   {
-    icon: <CalenderIcon />,
+    icon: <FolderIcon />,
     name: "Form 137",
     path: "/form-137",
   },

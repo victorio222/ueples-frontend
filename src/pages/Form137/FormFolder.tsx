@@ -1,7 +1,247 @@
+// import React, { useState } from "react";
+// import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+// import PageMeta from "../../components/common/PageMeta";
+// import { PlusIcon } from "../../icons";
+// import { Modal } from "../../components/ui/modal/index"; // Adjust path as needed
+// import Input from "../../components/form/input/InputField";
+// import Label from "../../components/form/Label";
+
+// export default function FormFolder() {
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [newYear, setNewYear] = useState("");
+
+//   const [folders, setFolders] = useState([
+//     { id: 1, year: "2020-2021", count: 120 },
+//     { id: 2, year: "2021-2022", count: 145 },
+//     { id: 3, year: "2022-2023", count: 132 },
+//     { id: 4, year: "2023-2024", count: 158 },
+//     { id: 5, year: "2024-2025", count: 98 },
+//     { id: 6, year: "2025-2026", count: 12 },
+//   ]);
+
+//   const sortedFolders = [...folders].sort((a, b) => b.year.localeCompare(a.year));
+
+//   const filteredFolders = sortedFolders.filter((f) =>
+//     f.year.toLowerCase().includes(searchTerm.toLowerCase()),
+//   );
+
+//   const handleCreateFolder = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     if (!newYear) return;
+
+//     const newFolder = {
+//       id: Date.now(),
+//       year: newYear,
+//       count: 0,
+//     };
+
+//     setFolders([newFolder, ...folders]);
+//     setNewYear("");
+//     setIsModalOpen(false);
+//   };
+
+//   return (
+//     <div>
+//       <PageMeta
+//         title="Document Folder | UEP Student Archives"
+//         description="Form 137 folders for UEP Student Archives"
+//       />
+//       <PageBreadcrumb pageTitle="Folders" />
+
+//       <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+//         <div className="mx-auto w-full max-w-[630px] text-center mb-10">
+//           <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
+//             Student Record Archives
+//           </h3>
+//           <p className="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
+//             Access compiled Form 137 documents organized by academic year. Click
+//             a folder to view individual student files.
+//           </p>
+//         </div>
+
+//         {/* Toolbar: Search and Add Button */}
+//         <div className="flex flex-col sm:flex-row justify-end items-center gap-3 mb-6">
+//           <div className="relative w-full sm:w-64">
+//             <input
+//               type="text"
+//               placeholder="Search year..."
+//               className="w-full rounded-lg border border-gray-200 bg-transparent py-2 pl-4 pr-10 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:text-white"
+//               onChange={(e) => setSearchTerm(e.target.value)}
+//             />
+//             <svg
+//               className="absolute right-3 top-2.5 h-4 w-4 text-gray-400"
+//               fill="none"
+//               stroke="currentColor"
+//               viewBox="0 0 24 24"
+//             >
+//               <path
+//                 strokeLinecap="round"
+//                 strokeLinejoin="round"
+//                 strokeWidth="2"
+//                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+//               />
+//             </svg>
+//           </div>
+//           <button
+//             onClick={() => setIsModalOpen(true)}
+//             className="w-full sm:w-auto text-sm bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+//           >
+//             <PlusIcon /> New Folder
+//           </button>
+//         </div>
+
+//         {/* Folder Grid */}
+//         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+//           {filteredFolders.length > 0 ? (
+//             filteredFolders.map((folder) => (
+//               <div
+//                 key={folder.id}
+//                 className="group cursor-pointer rounded-xl border border-gray-100 bg-gray-50/50 p-5 transition-all hover:border-blue-200 hover:bg-blue-50/30 dark:border-gray-800 dark:bg-white/[0.02] dark:hover:border-blue-500/30"
+//               >
+//                 <div className="flex items-start justify-between">
+//                   <div className="text-yellow-500 transition-transform group-hover:scale-110">
+//                     <svg
+//                       xmlns="http://www.w3.org/2000/svg"
+//                       className="h-12 w-12"
+//                       viewBox="0 0 24 24"
+//                       fill="currentColor"
+//                     >
+//                       <path d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Z" />
+//                     </svg>
+//                   </div>
+//                   <span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
+//                     {folder.count} Files
+//                   </span>
+//                 </div>
+//                 <div className="mt-4">
+//                   <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">
+//                     A.Y. {folder.year}
+//                   </h4>
+//                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+//                     Student Records (Form 137)
+//                   </p>
+//                 </div>
+//               </div>
+//             ))
+//           ) : (
+//             <div className="col-span-full py-20 text-center text-gray-400">
+//               No folders found for "{searchTerm}"
+//             </div>
+//           )}
+//         </div>
+//       </div>
+
+//       {/* New Folder Modal */}
+//       <Modal
+//         isOpen={isModalOpen}
+//         onClose={() => setIsModalOpen(false)}
+//         className="max-w-[450px] p-6 sm:p-8"
+//       >
+//         <div className="text-center">
+//           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+//             Create New Folder
+//           </h4>
+//           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+//             Enter the academic year for the new record collection.
+//           </p>
+
+//           <form onSubmit={handleCreateFolder} className="space-y-4">
+//             <div className="text-left">
+//               <Label>Academic Year</Label>
+//               <Input
+//                 type="text"
+//                 id="academic-year"
+//                 name="academic-year"
+//                 placeholder="e.g., 2026-2027"
+//               ></Input>
+
+
+//             </div>
+
+//             <div className="flex gap-3 pt-4">
+//               <button
+//                 type="button"
+//                 onClick={() => setIsModalOpen(false)}
+//                 className="flex-1 rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+//               >
+//                 Cancel
+//               </button>
+//               <button
+//                 type="submit"
+//                 className="flex-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+//               >
+//                 Create Folder
+//               </button>
+//             </div>
+//           </form>
+//         </div>
+//       </Modal>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+import React, { useState } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
+import { PlusIcon } from "../../icons";
+import { Modal } from "../../components/ui/modal/index"; 
+import Input from "../../components/form/input/InputField";
+import Label from "../../components/form/Label";
+import { useNavigate } from "react-router";
 
 export default function FormFolder() {
+  const navigate = useNavigate(); // Initialize navigation
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newYear, setNewYear] = useState("");
+
+  const [folders, setFolders] = useState([
+    { id: 1, year: "2020-2021", count: 120 },
+    { id: 2, year: "2021-2022", count: 145 },
+    { id: 3, year: "2022-2023", count: 132 },
+    { id: 4, year: "2023-2024", count: 158 },
+    { id: 5, year: "2024-2025", count: 98 },
+    { id: 6, year: "2025-2026", count: 12 },
+  ]);
+
+  // Sort: Latest Year to Oldest Year
+  const sortedFolders = [...folders].sort((a, b) => b.year.localeCompare(a.year));
+
+  const filteredFolders = sortedFolders.filter((f) =>
+    f.year.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const handleCreateFolder = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newYear) return;
+
+    const newFolder = {
+      id: Date.now(),
+      year: newYear,
+      count: 0,
+    };
+
+    setFolders([...folders, newFolder]);
+    setNewYear("");
+    setIsModalOpen(false);
+  };
+
+  // Function to navigate to the specific folder page
+  const handleFolderClick = (year: string) => {
+    // Navigates to e.g., /archive/2025-2026
+    navigate(`/archive/${year}`); 
+  };
+
   return (
     <div>
       <PageMeta
@@ -9,18 +249,117 @@ export default function FormFolder() {
         description="Form 137 folders for UEP Student Archives"
       />
       <PageBreadcrumb pageTitle="Folders" />
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
-        <div className="mx-auto w-full max-w-[630px] text-center">
-          <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
-            Card Title Here
-          </h3>
 
+      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+        <div className="mx-auto w-full max-w-[630px] text-center mb-10">
+          <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
+            Student Record Archives
+          </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-            Start putting content on grids or panels, you can also use different
-            combinations of grids.Please check out the dashboard and other pages
+            Access compiled Form 137 documents organized by academic year. Click
+            a folder to view individual student files.
           </p>
         </div>
+
+        {/* Toolbar */}
+        <div className="flex flex-col sm:flex-row justify-end items-center gap-3 mb-6">
+          <div className="relative w-full sm:w-64">
+            <input
+              type="text"
+              placeholder="Search year..."
+              className="w-full rounded-lg border border-gray-200 bg-transparent py-2 pl-4 pr-10 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:text-white"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="w-full sm:w-auto text-sm bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"
+          >
+            <PlusIcon /> New Folder
+          </button>
+        </div>
+
+        {/* Folder Grid */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {filteredFolders.length > 0 ? (
+            filteredFolders.map((folder) => (
+              <div
+                key={folder.id}
+                onClick={() => handleFolderClick(folder.year)}
+                className="group cursor-pointer rounded-xl border border-gray-100 bg-gray-50/50 p-5 transition-all hover:border-blue-200 hover:bg-blue-50/30 dark:border-gray-800 dark:bg-white/[0.02] dark:hover:border-blue-500/30"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="text-yellow-500 transition-transform group-hover:scale-110">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-12 w-12"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Z" />
+                    </svg>
+                  </div>
+                  <span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
+                    {folder.count} Files
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">
+                    A.Y. {folder.year}
+                  </h4>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Student Records (Form 137)
+                  </p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full py-20 text-center text-gray-400">
+              No folders found for "{searchTerm}"
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* New Folder Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        className="max-w-[450px] p-6 sm:p-8"
+      >
+        <div className="text-center">
+          <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+            Create New Folder
+          </h4>
+          <form onSubmit={handleCreateFolder} className="space-y-4">
+            <div className="text-left">
+              <Label>Academic Year</Label>
+              <Input
+                type="text"
+                placeholder="e.g., 2026-2027"
+                value={newYear}
+                onChange={(e) => setNewYear(e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="flex-1 rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="flex-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+              >
+                Create Folder
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
     </div>
   );
 }
