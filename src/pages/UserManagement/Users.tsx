@@ -12,7 +12,7 @@ export default function UserTables() {
       />
       <PageBreadcrumb pageTitle="User Management" />
       <div className="space-y-6">
-        <ComponentCard title="Users">
+        <ComponentCard title="">
           <UserTable />
         </ComponentCard>
       </div>
