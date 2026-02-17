@@ -53,7 +53,6 @@ const AdminDashboard = () => {
   const filteredYears = academicYears.filter(y => y.includes(searchTerm));
   const { dataPoints, rangeStart, rangeEnd } = useMemo(() => generateData(selectedYear), [selectedYear]);
 
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
