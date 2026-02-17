@@ -151,7 +151,7 @@ export default function BasicTableOne() {
       {/* Header with Add Button */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          User Management
+          Users
         </h3>
         <button
           onClick={() => setIsModalOpen(true)}
