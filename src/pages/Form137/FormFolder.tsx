@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { PlusIcon } from "../../icons";
@@ -6,47 +6,63 @@ import { Modal } from "../../components/ui/modal/index";
 import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 import { useNavigate } from "react-router";
+import API from "../../api"; // Added for dynamic access
+import { AcademicYear } from "../../types/models"; // Added for type safety
 
 export default function FormFolder() {
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newYear, setNewYear] = useState("");
 
-  const [folders, setFolders] = useState([
-    { id: 1, year: "2020-2021", count: 120 },
-    { id: 2, year: "2021-2022", count: 145 },
-    { id: 3, year: "2022-2023", count: 132 },
-    { id: 4, year: "2023-2024", count: 158 },
-    { id: 5, year: "2024-2025", count: 98 },
-    { id: 6, year: "2025-2026", count: 12 },
-  ]);
+  // Update 1: Dynamic state instead of static array
+  const [folders, setFolders] = useState<AcademicYear[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Sort: Latest Year to Oldest Year
-  const sortedFolders = [...folders].sort((a, b) => b.year.localeCompare(a.year));
+  // Update 2: Fetch logic to sync with your Backend
+  const fetchFolders = async () => {
+    try {
+      setLoading(true);
+      const response = await API.years.getAll();
+      // Safely access data from your ApiResponse structure
+      setFolders(response.data.data || []);
+      setError(null);
+    } catch (err: any) {
+      setError("Unable to connect to the server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFolders();
+  }, []);
+
+  // Sort & Filter (Updated to use 'academic_year' property from your Model)
+  const sortedFolders = [...folders].sort((a, b) => b.academic_year.localeCompare(a.academic_year));
 
   const filteredFolders = sortedFolders.filter((f) =>
-    f.year.toLowerCase().includes(searchTerm.toLowerCase()),
+    f.academic_year.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handleCreateFolder = (e: React.FormEvent) => {
+  // Update 3: Async creation with API feedback
+  const handleCreateFolder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newYear) return;
 
-    const newFolder = {
-      id: Date.now(),
-      year: newYear,
-      count: 0,
-    };
-
-    setFolders([...folders, newFolder]);
-    setNewYear("");
-    setIsModalOpen(false);
+    try {
+      await API.years.create(newYear);
+      setNewYear("");
+      setIsModalOpen(false);
+      fetchFolders(); // Refresh list automatically
+    } catch (err: any) {
+      // Handles your "already exists" or "invalid format" errors from backend
+      alert(err.response?.data?.message || "Error creating folder");
+    }
   };
 
-  // Function to navigate to the specific folder page
   const handleFolderClick = (year: string) => {
-    // Navigates to e.g., /archive/2025-2026
     navigate(`/archive/${year}`); 
   };
 
@@ -87,13 +103,17 @@ export default function FormFolder() {
           </button>
         </div>
 
+        {/* Status Indicators */}
+        {loading && <div className="text-center py-10 text-gray-500">Fetching folders...</div>}
+        {error && <div className="text-center py-10 text-red-500">{error}</div>}
+
         {/* Folder Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {filteredFolders.length > 0 ? (
+          {!loading && filteredFolders.length > 0 ? (
             filteredFolders.map((folder) => (
               <div
-                key={folder.id}
-                onClick={() => handleFolderClick(folder.year)}
+                key={folder.year_id} // Updated to use your Model Primary Key
+                onClick={() => handleFolderClick(folder.academic_year)}
                 className="group cursor-pointer rounded-xl border border-gray-100 bg-gray-50/50 p-5 transition-all hover:border-blue-200 hover:bg-blue-50/30 dark:border-gray-800 dark:bg-white/[0.02] dark:hover:border-blue-500/30"
               >
                 <div className="flex items-start justify-between">
@@ -107,13 +127,15 @@ export default function FormFolder() {
                       <path d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Z" />
                     </svg>
                   </div>
+                  {/* Note: folder.count is currently not in your Sequelize model, 
+                      so we hide it or keep it as 0 until we add the association */}
                   <span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-500 shadow-sm dark:bg-gray-800 dark:text-gray-400">
-                    {folder.count} Files
+                    Active
                   </span>
                 </div>
                 <div className="mt-4">
                   <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">
-                    A.Y. {folder.year}
+                    A.Y. {folder.academic_year}
                   </h4>
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Student Records (Form 137)
@@ -121,15 +143,14 @@ export default function FormFolder() {
                 </div>
               </div>
             ))
-          ) : (
+          ) : !loading && (
             <div className="col-span-full py-20 text-center text-gray-400">
-              No folders found for "{searchTerm}"
+              No folders found.
             </div>
           )}
         </div>
       </div>
 
-      {/* New Folder Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

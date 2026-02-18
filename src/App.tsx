@@ -21,6 +21,9 @@ import UserTables from "./pages/UserManagement/Users";
 import UploadAttachment from "./pages/UploadDocuments/Attachments";
 import FormFolder from "./pages/Form137/FormFolder";
 import ArchiveTables from "./pages/Archive/ArchiveForm";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import RoleGateway from "./components/common/RoleGateway";
+import PublicRoute from "./components/common/PublicRoute";
 
 export default function App() {
   return (
@@ -29,39 +32,47 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+              <Route element={<RoleGateway allowedRoles={["Admin", "Secretary", "Principal"]} />}>
+                <Route path="/users" element={<UserTables />} />
+              </Route>
 
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
+              <Route index path="/" element={<Home />} />
+              <Route path="/upload-documents" element={<UploadAttachment />} />
+              <Route path="/form-137" element={<FormFolder />} />
+              <Route path="/archive/:year" element={<ArchiveTables />} />
+              <Route path="/profile" element={<UserProfiles />} />
 
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
+              {/* Others Page */}
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/blank" element={<Blank />} />
 
-            {/* Tables */}
-            <Route path="/users" element={<UserTables />} />
-            <Route path="/upload-documents" element={<UploadAttachment />} />
-            <Route path="/form-137" element={<FormFolder />} />
-            <Route path="/archive/:year" element={<ArchiveTables />} />
+              {/* Forms */}
+              <Route path="/form-elements" element={<FormElements />} />
 
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
+              {/* Ui Elements */}
+              <Route path="/alerts" element={<Alerts />} />
+              <Route path="/avatars" element={<Avatars />} />
+              <Route path="/badge" element={<Badges />} />
+              <Route path="/buttons" element={<Buttons />} />
+              <Route path="/images" element={<Images />} />
+              <Route path="/videos" element={<Videos />} />
 
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
+              {/* Charts */}
+              <Route path="/line-chart" element={<LineChart />} />
+              <Route path="/bar-chart" element={<BarChart />} />
+            </Route>
           </Route>
 
           {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+          {/* <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} /> */}
+
+          <Route element={<PublicRoute />}>
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+          </Route>
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
@@ -70,3 +81,42 @@ export default function App() {
     </>
   );
 }
+
+// <Routes>
+//   <Route element={<ProtectedRoute />}>
+//     <Route element={<AppLayout />}>
+//       {/* Routes accessible by ANY logged-in user */}
+//       <Route index path="/" element={<Home />} />
+//       <Route path="/profile" element={<UserProfiles />} />
+
+//       {/* ADMIN ONLY ROUTES */}
+//       <Route element={<RoleGateway allowedRoles={["Admin"]} />}>
+//         <Route path="/users" element={<UserTables />} />
+//         <Route path="/archive/:year" element={<ArchiveTables />} />
+//       </Route>
+
+//       {/* STAFF & ADMIN ROUTES */}
+//       <Route element={<RoleGateway allowedRoles={["Admin", "Staff"]} />}>
+//         <Route path="/upload-documents" element={<UploadAttachment />} />
+//       </Route>
+
+//       {/* Common UI Elements */}
+//       <Route path="/buttons" element={<Buttons />} />
+//     </Route>
+//   </Route>
+
+//   <Route path="/signin" element={<SignIn />} />
+// </Routes>
+
+// // Inside Sidebar.tsx
+// const userRole = localStorage.getItem("user_role");
+
+// return (
+//   <nav>
+//     <Link to="/">Dashboard</Link>
+
+//     {userRole === "Admin" && (
+//       <Link to="/users">User Management</Link>
+//     )}
+//   </nav>
+// )

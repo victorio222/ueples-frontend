@@ -23,7 +23,7 @@ export default function ArchiveTables() {
           {/* Pro-tip: Pass the 'year' as a prop to your table 
              if you want to filter the data inside StudentArchiveTable 
           */}
-          <StudentArchiveTable selectedYear={year} />
+          <StudentArchiveTable selectedYear={year ?? ""} />
         </ComponentCard>
       </div>
     </>
