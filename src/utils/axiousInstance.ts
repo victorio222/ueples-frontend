@@ -1,34 +1,3 @@
-// import axios from 'axios';
-
-// const api = axios.create({
-//     baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
-//     withCredentials: true, // Crucial for sending/receiving cookies
-//     headers: {
-//         'Content-Type': 'application/json',
-//     },
-// });
-
-// // Optional: Response Interceptor to handle global errors (like 401 Unauthorized)
-// api.interceptors.response.use(
-//     (response) => response,
-//     (error) => {
-//         if (error.response?.status === 401) {
-//             // Redirect to login or clear local state
-//             console.error("Unauthorized! Redirecting...");
-//         }
-//         return Promise.reject(error);
-//     }
-// );
-
-// export default api;
-
-
-
-
-
-
-
-
 import axios from 'axios';
 
 const api = axios.create({

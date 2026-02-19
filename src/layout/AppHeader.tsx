@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useSidebar } from "../context/SidebarContext";
 import { ThemeToggleButton } from "../components/common/ThemeToggleButton";
-import NotificationDropdown from "../components/header/NotificationDropdown";
+// import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
 import { UserService } from "../api/services/userService";
+import { getCookie } from "../utils/auth";
 
 const AppHeader: React.FC = () => {
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
@@ -12,7 +13,7 @@ const AppHeader: React.FC = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const stored_id = localStorage.getItem("user_id");
+      const stored_id = getCookie("user_id");
       if (!stored_id) {
         setLoading(false);
         return;
@@ -20,10 +21,6 @@ const AppHeader: React.FC = () => {
 
       try {
         const response = await UserService.getById(Number(stored_id));
-
-        /** * Note: If your Service uses Axios, it's usually response.data
-         * If it's a raw fetch wrapper, it's response.json()
-         */
         const result = response.data;
 
         setUser(result);
@@ -70,7 +67,7 @@ const AppHeader: React.FC = () => {
         {/* Right: Actions & Profile */}
         <div className="flex items-center gap-1.5 sm:gap-4">
           <ThemeToggleButton />
-          <NotificationDropdown />
+          {/* <NotificationDropdown /> */}
 
           {loading ? (
             <div className="flex items-center gap-3">

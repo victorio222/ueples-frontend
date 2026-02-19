@@ -413,12 +413,15 @@ import { Link, useLocation } from "react-router";
 import {
   ChevronDownIcon,
   DocsIcon,
+  DownloadIcon,
   FolderIcon,
   GridIcon,
   HorizontaLDots,
   UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { Import } from "lucide-react";
+import { getCookie } from "../utils/auth";
 
 type NavItem = {
   name: string;
@@ -444,6 +447,12 @@ const navItems: NavItem[] = [
     name: "Form 137",
     path: "/form-137",
   },
+    {
+    icon: <Import />,
+    name: "Import Data",
+    path: "/import-data",
+    roles: ["Admin", "Principal", "Secretary"],
+  },
   {
     icon: <UserIcon />,
     name: "User Management",
@@ -461,7 +470,7 @@ const AppSidebar: React.FC = () => {
   const location = useLocation();
 
   // Get the role from localStorage
-  const userRole = localStorage.getItem("user_role");
+  const userRole = getCookie("user_role");
 
   // Filter items based on user role
   const filteredNavItems = navItems.filter((item) => {
@@ -595,8 +604,8 @@ const AppSidebar: React.FC = () => {
           <img src="/images/logo/uep-logo.png" alt="UEP Logo" width={isExpanded || isHovered || isMobileOpen ? 70 : 52} />
           {(isExpanded || isHovered || isMobileOpen) && (
             <div className="text-center">
-              <h1 className="text-lg font-bold text-[#003366] dark:text-white leading-tight">UEP Records</h1>
-              <p className="text-[10px] text-gray-500 uppercase tracking-widest">Northern Samar</p>
+              <h1 className="text-lg font-bold text-[#003366] dark:text-white leading-tight">UEPLES - Student Archives</h1>
+              <p className="text-[9px] text-gray-500 uppercase tracking-widest">University Town, Northern Samar</p>
             </div>
           )}
         </Link>

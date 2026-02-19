@@ -6,8 +6,8 @@ export default function SignIn() {
   return (
     <>
       <PageMeta
-        title="Login | UEP - Student Records"
-        description="Login page for UEP Student Records"
+        title="Login"
+        description="Login page for UEP - Student Records"
       />
       <AuthLayout>
         <SignInForm />

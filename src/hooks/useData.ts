@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import API from '../api';
 
 export const useData = () => {
     const [loading, setLoading] = useState(false);

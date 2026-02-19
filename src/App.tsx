@@ -24,17 +24,38 @@ import ArchiveTables from "./pages/Archive/ArchiveForm";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import RoleGateway from "./components/common/RoleGateway";
 import PublicRoute from "./components/common/PublicRoute";
+import Import from "./pages/ImportData/Import";
+import { Toaster } from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 export default function App() {
   return (
     <>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 5000,
+          className: "dark:bg-gray-800 dark:text-white",
+        }}
+      />
       <Router>
+        <Helmet
+          defaultTitle="UEP - Student Records"
+          titleTemplate="%s | UEP - Student Records"
+        />
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
-              <Route element={<RoleGateway allowedRoles={["Admin", "Secretary", "Principal"]} />}>
+              <Route
+                element={
+                  <RoleGateway
+                    allowedRoles={["Admin", "Secretary", "Principal"]}
+                  />
+                }
+              >
                 <Route path="/users" element={<UserTables />} />
               </Route>
 
@@ -43,6 +64,7 @@ export default function App() {
               <Route path="/form-137" element={<FormFolder />} />
               <Route path="/archive/:year" element={<ArchiveTables />} />
               <Route path="/profile" element={<UserProfiles />} />
+              <Route path="/import-data" element={<Import />} />
 
               {/* Others Page */}
               <Route path="/calendar" element={<Calendar />} />

@@ -7,7 +7,7 @@ export default function UserTables() {
   return (
     <>
       <PageMeta
-        title="User Management | UEP Student Archives"
+        title="User Management"
         description="User Management for Student Archives"
       />
       <PageBreadcrumb pageTitle="User Management" />

@@ -4,6 +4,8 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import API from "../../api";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 interface UserDropdownProps {
   user: any; // Accepts the JSON object from your API
 }
@@ -46,10 +48,10 @@ export default function UserDropdown({ user }: UserDropdownProps) {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button onClick={toggleDropdown} className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400">
+      <button onClick={toggleDropdown} className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-300">
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
           {user.user_image ? (
-            <img src={user.user_image} alt={user.first_name} className="h-full w-full object-cover" />
+            <img src={`${API_BASE_URL}/uploads/user_profiles/${user.user_image}`} alt={user.first_name} className="h-full w-full object-cover" />
           ) : (
             <span className="text-sm font-semibold text-gray-500">{user.first_name[0]}{user.last_name[0]}</span>
           )}
@@ -62,17 +64,17 @@ export default function UserDropdown({ user }: UserDropdownProps) {
 
       <Dropdown isOpen={isOpen} onClose={closeDropdown} className="absolute right-0 mt-[17px] w-[260px] p-3">
         <div className="px-3 py-2">
-          <span className="block font-medium text-gray-700 dark:text-gray-400">{user.first_name} {user.last_name}</span>
-          <span className="mt-0.5 block text-theme-xs text-gray-500">{user.email}</span>
+          <span className="block font-medium text-gray-700 dark:text-gray-300">{user.first_name} {user.last_name}</span>
+          <span className="mt-0.5 block text-theme-xs text-gray-400">{user.email}</span>
         </div>
         <ul className="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
           <li>
-            <DropdownItem tag="a" to="/profile" onItemClick={closeDropdown} className="flex items-center gap-3 px-3 py-2 text-theme-sm">
+            <DropdownItem tag="a" to="/profile" onItemClick={closeDropdown} className="flex items-center gap-3 px-3 py-2 text-theme-sm dark:text-gray-300 dark:hover:text-gray-800 rounded-sm">
                Edit profile
             </DropdownItem>
           </li>
         </ul>
-        <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 mt-3 text-theme-sm text-gray-700">Sign out</button>
+        <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 mt-3 text-theme-sm text-gray-700 dark:text-gray-300 hover:cursor-pointer">Sign out</button>
       </Dropdown>
     </div>
   );

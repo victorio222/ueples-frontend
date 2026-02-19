@@ -58,11 +58,13 @@ export interface Document extends BaseEntity {
   year_id: number;   // Links to AcademicYear.year_id
   type: string;      // e.g., "Birth Certificate"
   attachment: string; // URL or File path string
+  student: Student;
   createdAt: string
   
   // Optional: If you include associations in your API response
-  student?: Student;
+  // student?: Student;
   academicYear?: AcademicYear;
   user?: User;
   uploader?: User;
+  upload? :Document;
 }

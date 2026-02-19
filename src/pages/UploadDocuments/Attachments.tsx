@@ -8,7 +8,7 @@ export default function UploadAttachment() {
   return (
     <>
       <PageMeta
-        title="Upload Documents | UEP Student Archives"
+        title="Upload Documents"
         description="Upload Document of Form 137 for Student Archives"
       />
       <PageBreadcrumb pageTitle="Upload Documents" />

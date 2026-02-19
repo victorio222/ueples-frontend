@@ -35,6 +35,9 @@ export const UserService = {
     updateStatus: (id: number, status: string) => 
         api.put(`/users/update/status/${id}`, { status }),
 
+    updatePassword: (id: number, passwordData: { old_password: string; new_password: string }) => 
+        api.patch(`/users/change-pass/${id}`, passwordData),
+
     /**
      * Fetch all available roles for the dropdowns
      */

@@ -11,6 +11,16 @@ export const StudentService = {
 
     create: (data: Partial<Student>) => 
         api.post<ApiResponse<Student>>('/students', data),
+
+    // bulkImport: (students: any[]) => 
+    //     api.post<ApiResponse<{ count: number }>>('/students/import', { students }),
+
+    bulkImport: (formData: FormData) => 
+        api.post<ApiResponse<{ count: number }>>('/students/import', formData, {
+            headers: { 
+                'Content-Type': 'multipart/form-data' 
+            }
+        }),
     
     // For file uploads (using form-data)
     uploadProfile: (id: number, formData: FormData) => 
