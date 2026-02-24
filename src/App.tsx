@@ -18,7 +18,7 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import UserTables from "./pages/UserManagement/Users";
-import UploadAttachment from "./pages/UploadDocuments/Attachments";
+import UploadAttachment from "./pages/UploadDocuments/Attachment";
 import FormFolder from "./pages/Form137/FormFolder";
 import ArchiveTables from "./pages/Archive/ArchiveForm";
 import ProtectedRoute from "./components/common/ProtectedRoute";
@@ -27,8 +27,43 @@ import PublicRoute from "./components/common/PublicRoute";
 import Import from "./pages/ImportData/Import";
 import { Toaster } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
+import { useEffect, useState } from "react";
+import api from "./utils/axiousInstance";
+import DocTypeFolder from "./pages/DocumentType/DocType";
+import StudentList from "./pages/StudentsProfile/StudentList";
+import RegisterStudentProfile from "./pages/StudentsProfile/RegisterProfile";
+import FacultyList from "./pages/FacultyProfile/FacultyList";
+import RegisterFacultyProfile from "./pages/FacultyProfile/RegisterProfile";
 
 export default function App() {
+  const [isVerifying, setIsVerifying] = useState(true);
+
+  useEffect(() => {
+    const verifySession = async () => {
+      // Check if localStorage thinks we are logged in
+      const localRole = localStorage.getItem("user_role");
+      
+      if (localRole) {
+        try {
+          // Verify with the server using the HttpOnly cookie
+          await api.get("/auth/me");
+          // If this succeeds, the cookie is still there (browser wasn't closed)
+        } catch (err) {
+          // If this fails (401), the browser was closed and cookie is gone
+          localStorage.removeItem("user_role");
+          localStorage.removeItem("user_id");
+        }
+      }
+      setIsVerifying(false);
+    };
+
+    verifySession();
+  }, []);
+
+  // Prevent "flicker" while checking the session
+  if (isVerifying) {
+    return <div className="flex h-screen items-center justify-center">Loading Session...</div>;
+  }
   return (
     <>
       <Toaster
@@ -61,10 +96,17 @@ export default function App() {
 
               <Route index path="/" element={<Home />} />
               <Route path="/upload-documents" element={<UploadAttachment />} />
-              <Route path="/form-137" element={<FormFolder />} />
+              <Route path="/documents" element={<FormFolder />} />
+              <Route path="/document-types" element={<DocTypeFolder />} />
               <Route path="/archive/:year" element={<ArchiveTables />} />
               <Route path="/profile" element={<UserProfiles />} />
               <Route path="/import-data" element={<Import />} />
+              
+              <Route path="/students" element={<StudentList />} />
+              <Route path="/students/register" element={<RegisterStudentProfile />} />
+              
+              <Route path="/faculty" element={<FacultyList />} />
+              <Route path="/faculty/register" element={<RegisterFacultyProfile />} />
 
               {/* Others Page */}
               <Route path="/calendar" element={<Calendar />} />

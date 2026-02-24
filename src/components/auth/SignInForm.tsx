@@ -40,11 +40,11 @@ export default function SignInForm() {
 
         // 2. Proceed if user is active and data exists
         if (userData) {
-          // localStorage.setItem("user_id", userData.user_id.toString());
-          // localStorage.setItem("user_role", userData.role.toString());
+          localStorage.setItem("user_id", userData.user_id.toString());
+          localStorage.setItem("user_role", userData.role.toString());
 
-          document.cookie = `user_id=${userData.user_id}; path=/; SameSite=Lax;`;
-          document.cookie = `user_role=${userData.role}; path=/; SameSite=Lax;`;
+          // document.cookie = `user_id=${userData.user_id}; path=/; SameSite=Lax;`;
+          // document.cookie = `user_role=${userData.role}; path=/; SameSite=Lax;`;
 
           // Optional: Save name or email for a better UX
           // localStorage.setItem("user_name", userData.first_name);

@@ -1,4 +1,4 @@
-import { useParams } from "react-router"; // Import this to grab the year
+import { useLocation, useParams } from "react-router"; // Import this to grab the year
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
@@ -6,7 +6,14 @@ import StudentArchiveTable from "../../components/tables/archive-table/ArchiveTa
 
 export default function ArchiveTables() {
   // Extract the dynamic 'year' parameter from the URL (e.g., /archive/2025-2026)
+  // const { year } = useParams<{ year: string }>();
+
   const { year } = useParams<{ year: string }>();
+  const location = useLocation();
+  
+  // Extract ?type=Form%20137 from URL
+  const queryParams = new URLSearchParams(location.search);
+  const docType = queryParams.get("type");
 
   return (
     <>
@@ -19,11 +26,12 @@ export default function ArchiveTables() {
       <PageBreadcrumb pageTitle={`Archives: A.Y. ${year}`} />
 
       <div className="space-y-6">
-        <ComponentCard title={`Form 137 Records for ${year}`}>
-          {/* Pro-tip: Pass the 'year' as a prop to your table 
-             if you want to filter the data inside StudentArchiveTable 
-          */}
-          <StudentArchiveTable selectedYear={year ?? ""} />
+        <ComponentCard title={`${docType} Records for Batch ${year}`}>
+          {/* Pass both Year and Type to the table */}
+          <StudentArchiveTable 
+            selectedYear={year ?? ""} 
+            selectedType={docType ?? ""} 
+          />
         </ComponentCard>
       </div>
     </>

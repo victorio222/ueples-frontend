@@ -13,7 +13,7 @@ const AppHeader: React.FC = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const stored_id = getCookie("user_id");
+      const stored_id = localStorage.getItem("user_id");
       if (!stored_id) {
         setLoading(false);
         return;
@@ -39,12 +39,27 @@ const AppHeader: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 w-full items-center border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-gray-900 lg:h-20 lg:px-6">
-      <div className="relative flex w-full items-center justify-between">
-        {/* Left: Sidebar Toggle */}
+    // <header
+    //   className="sticky top-0 z-50 flex h-16 w-full items-center border-b border-gray-200 
+    //   /* Light Mode: Yellow Gradient */
+    //   bg-gradient-to-b from-yellow-500 to-yellow-400 
+    //   /* Dark Mode: Solid Deep Gray/Black (Original Theme) */
+    //   dark:border-gray-800 dark:bg-[#111827] dark:from-transparent dark:to-transparent
+    //   px-4 lg:h-20 lg:px-6 transition-colors duration-300"
+    // >
+
+    <header
+      className="sticky top-0 z-50 flex h-16 w-full items-center border-b-4 border-b-orange-400
+      /* Light Mode: Yellow Gradient */
+      bg-gradient-to-b bg-blue-950
+      /* Dark Mode: Solid Deep Gray/Black (Original Theme) */
+      dark:border-gray-800 dark:bg-[#111827] dark:from-transparent dark:to-transparent
+      px-4 lg:h-20 lg:px-6 transition-colors duration-300"
+    >
+      {/* <div className="relative flex w-full items-center justify-between">
         <div className="flex items-center gap-2 sm:gap-4">
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 lg:border lg:border-gray-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:lg:border-gray-800"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-yellow-100 hover:bg-yellow-500 lg:border lg:border-yellow-200 dark:text-gray-400 dark:hover:bg-gray-800 dark:lg:border-gray-800"
             onClick={handleToggle}
           >
             <svg
@@ -64,10 +79,8 @@ const AppHeader: React.FC = () => {
           </button>
         </div>
 
-        {/* Right: Actions & Profile */}
         <div className="flex items-center gap-1.5 sm:gap-4">
           <ThemeToggleButton />
-          {/* <NotificationDropdown /> */}
 
           {loading ? (
             <div className="flex items-center gap-3">
@@ -75,7 +88,43 @@ const AppHeader: React.FC = () => {
               <div className="hidden h-4 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700 sm:block" />
             </div>
           ) : (
-            // UserDropdown now receives the real API object
+            <UserDropdown user={user} />
+          )}
+        </div>
+      </div> */}
+
+      <div className="relative flex w-full items-center justify-between">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-blue-100 hover:bg-blue-900 lg:border lg:border-blue-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:lg:border-gray-800"
+            onClick={handleToggle}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              {isMobileOpen ? (
+                <path d="M18 6L6 18M6 6l12 12" />
+              ) : (
+                <path d="M4 6h16M4 12h10M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-1.5 sm:gap-4">
+          <ThemeToggleButton />
+
+          {loading ? (
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+              <div className="hidden h-4 w-20 animate-pulse rounded bg-gray-200 dark:bg-gray-700 sm:block" />
+            </div>
+          ) : (
             <UserDropdown user={user} />
           )}
         </div>

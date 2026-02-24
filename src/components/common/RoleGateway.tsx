@@ -6,7 +6,7 @@ interface RoleGatewayProps {
 }
 
 const RoleGateway = ({ allowedRoles }: RoleGatewayProps) => {
-  const userRole = getCookie("user_role");
+  const userRole = localStorage.getItem("user_role");
 
   // If the user's role isn't in the allowed list, send them home
   if (!userRole || !allowedRoles.includes(userRole)) {

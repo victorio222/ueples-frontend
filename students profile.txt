@@ -1,0 +1,64 @@
+students profile
+
+firstname
+middlename
+lastname
+suffixname
+sex
+birthplace
+religion
+address
+father
+mother
+fatheroccupation
+motheroccupation
+contactno
+
+ethnic group
+citizenship
+birthnumber
+no of siblings
+messenger/fbaccount
+grade level
+
+
+
+
+faculy profile
+
+firstname
+middlename
+lastname
+suffixname
+sex
+birthdate
+birthplace
+religion
+
+
+education background
+elem
+highschool
+tertiary college
+post baccalaureate
+graduate
+post graduate
+
+*school year graduated
+*school attended
+*honors received
+
+email address
+home address
+contact num
+
+training attended(table design)
+title of training | Duration and Venue | Sponsoring Agency | nature of Participation
+
+scholarly works
+-researches
+-creative works
+-IMS produced
+
+Special skills
+________________________

@@ -15,10 +15,12 @@ import { jsPDF } from "jspdf"; // Required: npm install jspdf
 
 interface StudentArchiveTableProps {
   selectedYear: string;
+  selectedType: string; // Add this
 }
 
 export default function StudentArchiveTable({
   selectedYear,
+  selectedType,
 }: StudentArchiveTableProps) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,9 +40,18 @@ export default function StudentArchiveTable({
       if (!selectedYear) return;
       try {
         setLoading(true);
+        // Step 1: Fetch documents for the specific year
         const response = await API.docs.getByYear(selectedYear);
         const data = response.data.data || response.data;
-        setDocuments(Array.isArray(data) ? data : []);
+        
+        // Step 2: Filter by Document Type locally 
+        // (or you can update your backend to accept a 'type' query param)
+        const allDocs = Array.isArray(data) ? data : [];
+        const typeFiltered = selectedType 
+            ? allDocs.filter(doc => doc.type === selectedType)
+            : allDocs;
+
+        setDocuments(typeFiltered);
         setError(null);
       } catch (err: any) {
         setError("Failed to load student documents.");
@@ -49,7 +60,25 @@ export default function StudentArchiveTable({
       }
     };
     fetchDocs();
-  }, [selectedYear]);
+  }, [selectedYear, selectedType]);
+
+  // useEffect(() => {
+  //   const fetchDocs = async () => {
+  //     if (!selectedYear) return;
+  //     try {
+  //       setLoading(true);
+  //       const response = await API.docs.getByYear(selectedYear);
+  //       const data = response.data.data || response.data;
+  //       setDocuments(Array.isArray(data) ? data : []);
+  //       setError(null);
+  //     } catch (err: any) {
+  //       setError("Failed to load student documents.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchDocs();
+  // }, [selectedYear]);
 
   // Filter logic
   const filteredData = documents.filter((doc) => {
@@ -186,7 +215,7 @@ export default function StudentArchiveTable({
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs uppercase"
                 >
-                  Status
+                  Uploaded By
                 </TableCell>
                 <TableCell
                   isHeader
@@ -240,7 +269,7 @@ export default function StudentArchiveTable({
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start">
                       <Badge size="sm" color="success">
-                        Verified
+                        {doc.uploader?.name}
                       </Badge>
                     </TableCell>
                     <TableCell className="px-5 py-4 text-gray-500 text-theme-sm">

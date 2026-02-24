@@ -887,6 +887,8 @@ export default function UserMetaCard({
           onUpdate(); // Re-fetch data in parent
           profileModal.closeModal();
           setLoading(false);
+          window.location.reload();
+          window.dispatchEvent(new Event("profileUpdated"));
           return "Profile updated successfully!";
         },
         error: (err) => {

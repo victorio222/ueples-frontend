@@ -49,7 +49,7 @@ export default function UserProfiles() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchProfile = useCallback(async () => {
-    const userId = getCookie("user_id")
+    const userId = localStorage.getItem("user_id")
     try {
       setLoading(true);
       // Assuming you want to fetch user ID 1 (Admin User)

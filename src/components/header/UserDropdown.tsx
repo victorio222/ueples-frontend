@@ -51,12 +51,13 @@ export default function UserDropdown({ user }: UserDropdownProps) {
       <button onClick={toggleDropdown} className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-300">
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
           {user.user_image ? (
-            <img src={`${API_BASE_URL}/uploads/user_profiles/${user.user_image}`} alt={user.first_name} className="h-full w-full object-cover" />
+            <img src={`${API_BASE_URL}/uploads/user_profiles/${user.user_image}`} alt={`${user.first_name} ${user.last_name}`} className="h-full w-full object-cover" />
           ) : (
             <span className="text-sm font-semibold text-gray-500">{user.first_name[0]}{user.last_name[0]}</span>
           )}
         </span>
-        <span className="block mr-1 font-medium text-theme-sm">{user.first_name}</span>
+        <span className="block mr-1 text-gray-200 font-medium text-theme-sm">{`${user.first_name} ${user.last_name}`}</span>
+        {/* <span className="block mr-1 text-gray-700 font-medium text-theme-sm">{`${user.first_name} ${user.last_name}`}</span> */}
         <svg className={`transition-transform ${isOpen ? "rotate-180" : ""}`} width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="currentColor">
           <path d="M4.3125 8.65625L9 13.3437L13.6875 8.65625" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>

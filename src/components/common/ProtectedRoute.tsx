@@ -32,7 +32,7 @@ const ProtectedRoute = () => {
     return null;
   };
 
-  const userId = getCookie("user_id");
+  const userId = localStorage.getItem("user_id");
 
   // If no user_id is found in the session cookie, redirect to signin
   if (!userId) {
