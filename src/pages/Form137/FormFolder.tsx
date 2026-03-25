@@ -1,4 +1,745 @@
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect, useMemo } from "react";
+// import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+// import PageMeta from "../../components/common/PageMeta";
+// import { PlusIcon } from "../../icons";
+// import { Modal } from "../../components/ui/modal/index";
+// import Input from "../../components/form/input/InputField";
+// import Label from "../../components/form/Label";
+// import { useLocation, useNavigate } from "react-router";
+// import API from "../../api";
+// import { AcademicYear, Folder } from "../../types/models";
+// import { showAlert } from "../../utils/toaster";
+// import {
+//   FilePlusIcon,
+//   LayoutGrid,
+//   List,
+//   FileText,
+//   FolderIcon,
+//   ChevronRight,
+//   Search,
+//   MoreVertical,
+//   Pencil,
+//   Trash2,
+//   Download,
+//   Eye,
+//   FileCode,
+//   FileArchive,
+//   FileAudio,
+//   FileVideo,
+//   File,
+// } from "lucide-react";
+
+// export default function FormFolder() {
+//   const navigate = useNavigate();
+//   const location = useLocation();
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+//   // Modal & Form States
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
+//   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+//   const [newYear, setNewYear] = useState("");
+//   const [renameValue, setRenameValue] = useState("");
+//   const [activeItem, setActiveItem] = useState<any>(null);
+//   const [fileName, setFileName] = useState("");
+//   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+//   // Data States
+//   const [folders, setFolders] = useState<AcademicYear[]>([]);
+//   const [nestedFolders, setNestedFolders] = useState<Folder[]>([]);
+//   const [currentFiles, setCurrentFiles] = useState<any[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [isImported, setIsImported] = useState(false);
+//   const [openPopoverId, setOpenPopoverId] = useState<string | number | null>(
+//     null,
+//   );
+
+//   const queryParams = new URLSearchParams(location.search);
+//   const selectedType = queryParams.get("type");
+//   const folderIdParam = queryParams.get("folderId");
+//   const userRole = localStorage.getItem("user_role");
+
+//   // Helper to determine File Icon based on extension
+//   const getFileIcon = (fileName: string) => {
+//     const ext = fileName?.split(".").pop()?.toLowerCase();
+//     const size = viewMode === "grid" ? 48 : 20;
+//     const className = "text-gray-500";
+
+//     switch (ext) {
+//       // Images and Docs already handled by FileText/red, but we can be more specific:
+//       case "pdf":
+//         return <FileText size={size} className="text-red-500" />;
+//       case "zip":
+//       case "rar":
+//       case "7z":
+//         return <FileArchive size={size} className="text-orange-500" />;
+//       case "doc":
+//       case "docx":
+//         return <FileText size={size} className="text-blue-600" />;
+//       case "xls":
+//       case "xlsx":
+//       case "csv":
+//         return <FileText size={size} className="text-green-600" />;
+//       case "mp4":
+//       case "mov":
+//         return <FileVideo size={size} className="text-purple-500" />;
+//       case "mp3":
+//       case "wav":
+//         return <FileAudio size={size} className="text-pink-500" />;
+//       case "js":
+//       case "ts":
+//       case "tsx":
+//       case "html":
+//       case "css":
+//         return <FileCode size={size} className="text-yellow-600" />;
+//       default:
+//         return <File size={size} className={className} />;
+//     }
+//   };
+
+//   const fetchFolders = async () => {
+//     if (!selectedType) return;
+//     try {
+//       setLoading(true);
+//       const rootCategory = selectedType.split("/")[0];
+//       const docRes = await API.docs.getById(rootCategory);
+//       const docType = docRes.data.data;
+//       if (!docType) {
+//         setLoading(false);
+//         return;
+//       }
+
+//       const isBatchMode = docType.isBatchesImported;
+//       setIsImported(isBatchMode);
+
+//       if (isBatchMode) {
+//         const yearRes = await API.years.getAll();
+//         setFolders(yearRes.data.data || []);
+//         setNestedFolders([]);
+//         setCurrentFiles([]);
+//       } else {
+//         let subfolders = [];
+//         let files = [];
+//         if (folderIdParam) {
+//           const [subRes, filesRes] = await Promise.all([
+//             API.docs.getSubFolders(folderIdParam),
+//             API.docs
+//               .getFilesByFolder(folderIdParam)
+//               .catch(() => ({ data: { data: [] } })),
+//           ]);
+//           subfolders = subRes.data?.data || subRes.data || [];
+//           files = filesRes.data?.data || filesRes.data || [];
+//         } else {
+//           const treeRes = await API.docs.getFolderTree(docType.doctype_id);
+//           subfolders = Array.isArray(treeRes.data)
+//             ? treeRes.data
+//             : treeRes.data?.data || [];
+//         }
+//         setNestedFolders(subfolders);
+//         setCurrentFiles(files);
+//         setFolders([]);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchFolders();
+//   }, [selectedType, folderIdParam]);
+
+//   // UNIFIED LIST: Folders and Files sorted together alphabetically
+//   const explorerItems = useMemo(() => {
+//     const folderItems = isImported
+//       ? folders.map((f) => ({
+//           ...f,
+//           id: `batch-${f.academic_year}`,
+//           isFolder: true,
+//           explorerName: `Batch ${f.academic_year}`,
+//           explorerType: "batch",
+//         }))
+//       : nestedFolders.map((f) => ({
+//           ...f,
+//           id: f.folder_id,
+//           isFolder: true,
+//           explorerName: f.name,
+//           explorerType: "folder",
+//         }));
+
+//     const fileItems = currentFiles.map((f) => ({
+//       ...f,
+//       id: f.file_id,
+//       isFolder: false,
+//       explorerName: f.name || f.original_name,
+//       explorerType: "file",
+//     }));
+
+//     return [...folderItems, ...fileItems]
+//       .filter((item) =>
+//         item.explorerName.toLowerCase().includes(searchTerm.toLowerCase()),
+//       )
+//       .sort((a, b) => a.explorerName.localeCompare(b.explorerName));
+//   }, [folders, nestedFolders, currentFiles, searchTerm, isImported]);
+
+//   const handleItemClick = (item: any) => {
+//     if (item.isFolder) {
+//       if (item.explorerType === "batch") {
+//         navigate(
+//           `/archive/${item.academic_year}?type=${encodeURIComponent(selectedType!)}`,
+//         );
+//       } else {
+//         const newPath = `${selectedType}/${item.explorerName}`;
+//         navigate(
+//           `/documents?type=${encodeURIComponent(newPath)}&folderId=${item.folder_id}`,
+//         );
+//       }
+//     } else {
+//       handleView(item);
+//     }
+//   };
+
+//   const handleView = (item: any) =>
+//     window.open(
+//       `http://192.168.1.75:5000/api/${item.file_attachment}`,
+//       "_blank",
+//     );
+
+//   const handleDownload = (item: any) => {
+//     const link = document.createElement("a");
+//     link.href = `http://192.168.1.75:5000/api/${item.file_attachment}`;
+//     link.download = item.explorerName;
+//     link.click();
+//   };
+
+//   const handleDelete = async (item: any) => {
+//     const result = await showAlert.confirm(
+//       "Delete Item?",
+//       `This will permanently remove ${item.explorerName}.`,
+//     );
+//     if (!result.isConfirmed) return;
+//     try {
+//       showAlert.loading("Processing...");
+//       if (item.isFolder) await API.docs.deleteFolder(item.folder_id);
+//       else await API.docs.deleteFile(item.file_id);
+//       showAlert.success("Deleted", "Item removed successfully.");
+//       fetchFolders();
+//     } catch (err) {
+//       showAlert.error("Error", "Could not delete item.");
+//     }
+//   };
+
+//   const onRenameSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+
+//     // Basic validation to prevent empty names
+//     if (!renameValue.trim()) {
+//       showAlert.error("Validation Error", "Name cannot be empty.");
+//       return;
+//     }
+
+//     try {
+//       showAlert.loading("Renaming...");
+
+//       // WRAP renameValue in an object: { name: renameValue }
+//       if (activeItem.isFolder) {
+//         await API.docs.renameFolder(activeItem.folder_id, {
+//           name: renameValue,
+//         } as any);
+//       } else {
+//         await API.docs.renameFile(activeItem.file_id, {
+//           name: renameValue,
+//         } as any);
+//       }
+
+//       setIsRenameModalOpen(false);
+//       showAlert.success("Success", "Renamed successfully.");
+//       fetchFolders();
+//     } catch (err) {
+//       console.error(err);
+//       showAlert.error("Error", "Failed to rename.");
+//     }
+//   };
+
+//   const handleCreateFolder = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     showAlert.loading("Creating folder...");
+//     try {
+//       const rootCategory = selectedType!.split("/")[0];
+//       const docRes = await API.docs.getById(rootCategory);
+//       if (isImported) await API.years.create(newYear);
+//       else {
+//         await (folderIdParam
+//           ? API.docs.createSubFolder({
+//               name: newYear,
+//               doctype_id: docRes.data.data.doctype_id,
+//               parent_folder_id: folderIdParam,
+//             })
+//           : API.docs.creatRootFolder({
+//               name: newYear,
+//               doctype_id: docRes.data.data.doctype_id,
+//               parent_folder_id: null,
+//             }));
+//       }
+//       showAlert.success("Success!", "Folder created.");
+//       setNewYear("");
+//       setIsModalOpen(false);
+//       fetchFolders();
+//     } catch (err) {
+//       showAlert.error("Error", "Failed to create.");
+//     }
+//   };
+
+//   const handleUploadFile = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     const formData = new FormData();
+//     formData.append("name", fileName);
+//     formData.append("folder_id", folderIdParam!);
+//     formData.append("file_attachment", selectedFile!);
+//     showAlert.loading("Uploading...");
+//     try {
+//       await API.docs.uploadToFolder(formData);
+//       showAlert.success("Uploaded!", "File saved.");
+//       setFileName("");
+//       setSelectedFile(null);
+//       setIsFileModalOpen(false);
+//       fetchFolders();
+//     } catch (err) {
+//       showAlert.error("Error", "Upload failed.");
+//     }
+//   };
+
+//   const ActionPopover = ({ item }: { item: any }) => {
+//     if (openPopoverId !== item.id) return null;
+//     return (
+//       <>
+//         <div
+//           className="fixed inset-0 z-10"
+//           onClick={(e) => {
+//             e.stopPropagation();
+//             setOpenPopoverId(null);
+//           }}
+//         ></div>
+//         <div className="absolute right-0 top-10 z-20 w-44 rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900 py-2 overflow-hidden animate-in fade-in zoom-in duration-100">
+//           {!item.isFolder && (
+//             <>
+//               {/* <button onClick={(e) => { e.stopPropagation(); handleView(item); setOpenPopoverId(null); }} className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-700 dark:text-gray-200 transition-colors">
+//                 <Eye size={16} className="text-blue-500" /> View
+//               </button> */}
+//               <button
+//                 onClick={(e) => {
+//                   e.stopPropagation();
+//                   handleDownload(item);
+//                   setOpenPopoverId(null);
+//                 }}
+//                 className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-700 dark:text-gray-200 transition-colors"
+//               >
+//                 <Download size={16} className="text-blue-500" /> Download
+//               </button>
+//               <div className="h-[1px] bg-gray-100 dark:bg-gray-800 my-1"></div>
+//             </>
+//           )}
+//           <button
+//             onClick={(e) => {
+//               e.stopPropagation();
+//               setActiveItem(item);
+//               setRenameValue(item.explorerName);
+//               setIsRenameModalOpen(true);
+//               setOpenPopoverId(null);
+//             }}
+//             className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-700 dark:text-gray-200 transition-colors"
+//           >
+//             <Pencil size={16} className="text-blue-500" /> Rename
+//           </button>
+//           <button
+//             onClick={(e) => {
+//               e.stopPropagation();
+//               handleDelete(item);
+//               setOpenPopoverId(null);
+//             }}
+//             className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors"
+//           >
+//             <Trash2 size={16} /> Delete
+//           </button>
+//         </div>
+//       </>
+//     );
+//   };
+
+//   return (
+//     <>
+//       <PageMeta title="File Manager" />
+//       <PageBreadcrumb pageTitle="Explorer" />
+
+//       <div className="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+//         {/* Navigation Bar */}
+//         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+//           <div className="flex items-center gap-3">
+//             <button
+//               onClick={() => navigate(-1)}
+//               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5"
+//             >
+//               <ChevronRight className="rotate-180" size={20} />
+//             </button>
+//             <div className="flex items-center text-sm font-medium text-gray-400">
+//               {selectedType?.split("/").map((part, i, arr) => (
+//                 <React.Fragment key={i}>
+//                   <span
+//                     className={
+//                       i === arr.length - 1
+//                         ? "text-gray-800 dark:text-white font-bold"
+//                         : ""
+//                     }
+//                   >
+//                     {part}
+//                   </span>
+//                   {i < arr.length - 1 && (
+//                     <ChevronRight size={14} className="mx-1" />
+//                   )}
+//                 </React.Fragment>
+//               ))}
+//             </div>
+//           </div>
+
+//           <div className="flex items-center gap-2">
+//             <div className="relative">
+//               <Search
+//                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+//                 size={16}
+//               />
+//               <input
+//                 type="text"
+//                 placeholder="Search..."
+//                 className="w-full sm:w-64 rounded-lg border border-gray-200 bg-transparent py-2 pl-10 pr-4 text-sm dark:border-gray-700 dark:text-white"
+//                 onChange={(e) => setSearchTerm(e.target.value)}
+//               />
+//             </div>
+//             <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-lg border border-gray-200 dark:border-gray-800">
+//               <button
+//                 onClick={() => setViewMode("grid")}
+//                 className={`p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-white dark:bg-gray-800 shadow-sm text-blue-600" : "text-gray-500"}`}
+//               >
+//                 <LayoutGrid size={18} />
+//               </button>
+//               <button
+//                 onClick={() => setViewMode("list")}
+//                 className={`p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-white dark:bg-gray-800 shadow-sm text-blue-600" : "text-gray-500"}`}
+//               >
+//                 <List size={18} />
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Global Toolbar */}
+//         {!isImported && userRole !== "Staff" && (
+//           <div className="flex gap-2 mb-8">
+//             <button
+//               onClick={() => setIsModalOpen(true)}
+//               className="text-sm bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/10 active:scale-95 hover:-translate-y-0.5"
+//             >
+//               <PlusIcon /> New Folder
+//             </button>
+//             <button
+//               onClick={() =>
+//                 folderIdParam
+//                   ? setIsFileModalOpen(true)
+//                   : showAlert.error(
+//                       "Selection Needed",
+//                       "Selection a folder to upload files.",
+//                     )
+//               }
+//               className="text-sm bg-green-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-green-700 transition-all shadow-lg shadow-green-500/10 active:scale-95 hover:-translate-y-0.5"
+//             >
+//               <FilePlusIcon size={17} /> New File
+//             </button>
+//           </div>
+//         )}
+
+//         {/* Main Content Area */}
+//         {loading ? (
+//           <div className="flex flex-col items-center justify-center py-32 space-y-4">
+//             <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+//             <p className="text-gray-400 text-sm animate-pulse">
+//               Fetching records...
+//             </p>
+//           </div>
+//         ) : explorerItems.length === 0 ? (
+//           <div className="py-24 text-center">
+//             <div className="bg-gray-50 dark:bg-white/[0.02] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+//               <FolderIcon size={40} className="text-gray-200" />
+//             </div>
+//             <h3 className="text-gray-800 dark:text-white font-medium">
+//               No items found
+//             </h3>
+//             <p className="text-gray-400 text-sm mt-1">
+//               Try a different search or upload a new file.
+//             </p>
+//           </div>
+//         ) : viewMode === "grid" ? (
+//           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+//             {explorerItems.map((item) => (
+//               <div
+//                 key={item.id}
+//                 className="group relative rounded-2xl border border-gray-100 bg-white p-4 transition-all hover:border-blue-200 hover:bg-blue-50/20 dark:border-gray-800 dark:bg-white/[0.01] dark:hover:border-blue-500/30 shadow-sm hover:shadow-lg"
+//               >
+//                 <div className="flex items-start justify-between mb-4">
+//                   <div
+//                     onClick={() => handleItemClick(item)}
+//                     className="cursor-pointer transition-transform group-hover:scale-105 duration-200"
+//                   >
+//                     {item.isFolder ? (
+//                       <FolderIcon
+//                         size={54}
+//                         className="text-blue-500 fill-blue-500/10"
+//                       />
+//                     ) : (
+//                       <div className="relative">
+//                         {getFileIcon(item.file_attachment || item.explorerName)}
+//                         <span className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-md px-1.5 py-0.5 text-[9px] font-bold border border-gray-200 dark:border-gray-700 uppercase shadow-sm">
+//                           {item.file_attachment?.split(".").pop() || "file"}
+//                         </span>
+//                       </div>
+//                     )}
+//                   </div>
+//                   <div className="relative">
+//                     <button
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         setOpenPopoverId(
+//                           openPopoverId === item.id ? null : item.id,
+//                         );
+//                       }}
+//                       className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
+//                     >
+//                       <MoreVertical size={20} />
+//                     </button>
+//                     <ActionPopover item={item} />
+//                   </div>
+//                 </div>
+//                 <div
+//                   className="cursor-pointer"
+//                   onClick={() => handleItemClick(item)}
+//                 >
+//                   <h4
+//                     className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate w-full"
+//                     title={item.explorerName}
+//                   >
+//                     {item.explorerName}
+//                   </h4>
+//                   <p className="mt-1 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+//                     {item.isFolder ? "Folder" : "Document"}
+//                   </p>
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//         ) : (
+//           <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
+//             <table className="w-full text-left text-sm">
+//               <thead className="bg-gray-50 dark:bg-white/[0.02] border-b border-gray-200 dark:border-gray-800">
+//                 <tr>
+//                   <th className="px-6 py-4 font-semibold text-gray-500 tracking-wider">
+//                     Item Name
+//                   </th>
+//                   {/* <th className="px-6 py-4 font-bold text-gray-500 tracking-wider">Type</th> */}
+//                   <th className="px-6 py-4 font-bold text-gray-500 tracking-wider text-right">
+//                     Actions
+//                   </th>
+//                 </tr>
+//               </thead>
+//               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+//                 {explorerItems.map((item) => (
+//                   <tr
+//                     key={item.id}
+//                     className="group hover:bg-blue-50/40 dark:hover:bg-blue-900/10 transition-colors"
+//                   >
+//                     <td
+//                       className="px-6 py-4 flex items-center gap-4 cursor-pointer"
+//                       onClick={() => handleItemClick(item)}
+//                     >
+//                       {item.isFolder ? (
+//                         <FolderIcon size={20} className="text-blue-500" />
+//                       ) : (
+//                         getFileIcon(item.file_attachment)
+//                       )}
+//                       <span className="font-semibold text-gray-700 dark:text-gray-200">
+//                         {item.explorerName}
+//                       </span>
+//                     </td>
+//                     {/* <td className="px-6 py-4 text-gray-400 text-xs font-medium uppercase tracking-widest">{item.isFolder ? 'Folder' : (item.file_attachment?.split('.').pop() || 'File')}</td> */}
+//                     <td className="px-6 py-4 text-right relative">
+//                       <button
+//                         onClick={(e) => {
+//                           e.stopPropagation();
+//                           setOpenPopoverId(
+//                             openPopoverId === item.id ? null : item.id,
+//                           );
+//                         }}
+//                         className="p-2.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-colors"
+//                       >
+//                         <MoreVertical size={18} />
+//                       </button>
+//                       <ActionPopover item={item} />
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+//         )}
+//       </div>
+
+//       {/* --- ALL MODALS (Rename, New Folder, Upload) --- */}
+//       <Modal
+//         isOpen={isRenameModalOpen}
+//         onClose={() => setIsRenameModalOpen(false)}
+//         className="max-w-[420px] p-8 z-[200]"
+//       >
+//         <h4 className="text-2xl font-bold mb-2 text-center text-gray-800 dark:text-white">
+//           Rename
+//         </h4>
+//         <p className="text-center text-gray-400 text-sm mb-6">
+//           Changing the name will update all references.
+//         </p>
+//         <form onSubmit={onRenameSubmit} className="space-y-5">
+//           <div>
+//             <Label>Name</Label>
+//             <Input
+//               value={renameValue}
+//               onChange={(e) => setRenameValue(e.target.value)}
+//               required
+//               className="mt-1"
+//             />
+//           </div>
+//           <div className="flex gap-3">
+//             <button
+//               type="button"
+//               onClick={() => setIsRenameModalOpen(false)}
+//               className="flex-1 border border-gray-200 dark:border-gray-700 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+//             >
+//               Cancel
+//             </button>
+//             <button
+//               type="submit"
+//               className="flex-1 bg-blue-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-500/20"
+//             >
+//               Save Changes
+//             </button>
+//           </div>
+//         </form>
+//       </Modal>
+
+//       <Modal
+//         isOpen={isModalOpen}
+//         onClose={() => setIsModalOpen(false)}
+//         className="max-w-[450px] p-8 z-[200]"
+//       >
+//         <h4 className="mb-2 text-2xl font-bold text-center text-gray-800 dark:text-white">
+//           {folderIdParam ? "New Sub-folder" : "New Folder"}
+//         </h4>
+//         <p className="text-center text-sm text-gray-400 mb-8">
+//           Classification helps in faster document retrieval.
+//         </p>
+//         <form onSubmit={handleCreateFolder} className="space-y-5">
+//           <div>
+//             <Label>Folder Name</Label>
+//             <Input
+//               type="text"
+//               value={newYear}
+//               onChange={(e) => setNewYear(e.target.value)}
+//               placeholder="e.g. 2nd Semester 2024"
+//               required
+//               className="mt-1"
+//             />
+//           </div>
+//           <div className="flex gap-3 pt-2">
+//             <button
+//               type="button"
+//               onClick={() => setIsModalOpen(false)}
+//               className="flex-1 rounded-xl border border-gray-200 dark:border-gray-700 py-3 text-sm font-bold hover:bg-gray-50 transition-all"
+//             >
+//               Cancel
+//             </button>
+//             <button
+//               type="submit"
+//               className="flex-1 rounded-xl bg-blue-600 text-white py-3 text-sm font-bold hover:bg-blue-700 active:scale-95 transition-all shadow-lg shadow-blue-500/20"
+//             >
+//               Create Folder
+//             </button>
+//           </div>
+//         </form>
+//       </Modal>
+
+//       <Modal
+//         isOpen={isFileModalOpen}
+//         onClose={() => setIsFileModalOpen(false)}
+//         className="max-w-[450px] p-8 z-[200]"
+//       >
+//         <h4 className="mb-2 text-2xl font-bold text-center text-gray-800 dark:text-white">
+//           Upload New Item
+//         </h4>
+//         <p className="text-center text-sm text-gray-400 mb-8">
+//           You can upload any file format here.
+//         </p>
+//         <form onSubmit={handleUploadFile} className="space-y-5">
+//           <div>
+//             <Label>Display Name</Label>
+//             <Input
+//               type="text"
+//               value={fileName}
+//               onChange={(e) => setFileName(e.target.value)}
+//               placeholder="File title..."
+//               required
+//               className="mt-1"
+//             />
+//           </div>
+//           <div>
+//             <Label>Select File</Label>
+//             <div className="mt-2 flex justify-center px-6 pt-8 pb-10 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-400 dark:hover:border-blue-500 transition-all cursor-pointer group bg-gray-50/30 dark:bg-white/[0.01]">
+//               <label className="space-y-2 text-center cursor-pointer w-full">
+//                 <FileText className="mx-auto h-14 w-14 text-gray-300 group-hover:text-blue-500 group-hover:scale-110 transition-all" />
+//                 <div className="text-sm text-blue-600 font-bold group-hover:text-blue-700">
+//                   {selectedFile ? selectedFile.name : "Browse Files"}
+//                   <input
+//                     type="file"
+//                     className="sr-only"
+//                     onChange={(e) =>
+//                       setSelectedFile(e.target.files?.[0] || null)
+//                     }
+//                     required
+//                   />
+//                 </div>
+//                 <p className="text-[10px] text-gray-400 uppercase tracking-widest">
+//                   Max file size: 50MB
+//                 </p>
+//               </label>
+//             </div>
+//           </div>
+//           <div className="flex gap-3 pt-4">
+//             <button
+//               type="button"
+//               onClick={() => setIsFileModalOpen(false)}
+//               className="flex-1 rounded-xl border border-gray-200 py-3 text-sm font-bold hover:bg-gray-50 transition-all"
+//             >
+//               Cancel
+//             </button>
+//             <button
+//               type="submit"
+//               className="flex-1 rounded-xl bg-green-600 text-white py-3 text-sm font-bold hover:bg-green-700 active:scale-95 transition-all shadow-lg shadow-green-500/20"
+//             >
+//               Start Upload
+//             </button>
+//           </div>
+//         </form>
+//       </Modal>
+//     </>
+//   );
+// }
+
+import React, { useState, useEffect, useMemo } from "react";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import { PlusIcon } from "../../icons";
@@ -7,32 +748,142 @@ import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 import { useLocation, useNavigate } from "react-router";
 import API from "../../api";
-import { AcademicYear } from "../../types/models";
-import { showAlert } from "../../utils/toaster"; // Import helper
+import { AcademicYear, Folder } from "../../types/models";
+import { showAlert } from "../../utils/toaster";
+import {
+  FilePlusIcon,
+  LayoutGrid,
+  List,
+  FileText,
+  FolderIcon,
+  ChevronRight,
+  Search,
+  MoreVertical,
+  Pencil,
+  Trash2,
+  Download,
+  Eye,
+  FileCode,
+  FileArchive,
+  FileAudio,
+  FileVideo,
+  File,
+} from "lucide-react";
 
 export default function FormFolder() {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
+  // Modal & Form States
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFileModalOpen, setIsFileModalOpen] = useState(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [newYear, setNewYear] = useState("");
+  const [renameValue, setRenameValue] = useState("");
+  const [activeItem, setActiveItem] = useState<any>(null);
+  const [fileName, setFileName] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Data States
   const [folders, setFolders] = useState<AcademicYear[]>([]);
+  const [nestedFolders, setNestedFolders] = useState<Folder[]>([]);
+  const [currentFiles, setCurrentFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isImported, setIsImported] = useState(false);
+  const [openPopoverId, setOpenPopoverId] = useState<string | number | null>(
+    null,
+  );
 
   const queryParams = new URLSearchParams(location.search);
   const selectedType = queryParams.get("type");
+  const folderIdParam = queryParams.get("folderId");
 
+  // Get User Role
   const userRole = localStorage.getItem("user_role");
 
+  // Helper to determine File Icon based on extension
+  const getFileIcon = (fileName: string) => {
+    const ext = fileName?.split(".").pop()?.toLowerCase();
+    const size = viewMode === "grid" ? 48 : 20;
+    const className = "text-gray-500";
+
+    switch (ext) {
+      case "pdf":
+        return <FileText size={size} className="text-red-500" />;
+      case "zip":
+      case "rar":
+      case "7z":
+        return <FileArchive size={size} className="text-orange-500" />;
+      case "doc":
+      case "docx":
+        return <FileText size={size} className="text-blue-600" />;
+      case "xls":
+      case "xlsx":
+      case "csv":
+        return <FileText size={size} className="text-green-600" />;
+      case "mp4":
+      case "mov":
+        return <FileVideo size={size} className="text-purple-500" />;
+      case "mp3":
+      case "wav":
+        return <FileAudio size={size} className="text-pink-500" />;
+      case "js":
+      case "ts":
+      case "tsx":
+      case "html":
+      case "css":
+        return <FileCode size={size} className="text-yellow-600" />;
+      default:
+        return <File size={size} className={className} />;
+    }
+  };
+
   const fetchFolders = async () => {
+    if (!selectedType) return;
     try {
       setLoading(true);
-      const response = await API.years.getAll();
-      setFolders(response.data.data || []);
-      setError(null);
-    } catch (err: any) {
-      setError("Unable to connect to the server.");
+      const rootCategory = selectedType.split("/")[0];
+      const docRes = await API.docs.getById(rootCategory);
+      const docType = docRes.data.data;
+      if (!docType) {
+        setLoading(false);
+        return;
+      }
+
+      const isBatchMode = docType.isBatchesImported;
+      setIsImported(isBatchMode);
+
+      if (isBatchMode) {
+        const yearRes = await API.years.getAll();
+        setFolders(yearRes.data.data || []);
+        setNestedFolders([]);
+        setCurrentFiles([]);
+      } else {
+        let subfolders = [];
+        let files = [];
+        if (folderIdParam) {
+          const [subRes, filesRes] = await Promise.all([
+            API.docs.getSubFolders(folderIdParam),
+            API.docs
+              .getFilesByFolder(folderIdParam)
+              .catch(() => ({ data: { data: [] } })),
+          ]);
+          subfolders = subRes.data?.data || subRes.data || [];
+          files = filesRes.data?.data || filesRes.data || [];
+        } else {
+          const treeRes = await API.docs.getFolderTree(docType.doctype_id);
+          subfolders = Array.isArray(treeRes.data)
+            ? treeRes.data
+            : treeRes.data?.data || [];
+        }
+        setNestedFolders(subfolders);
+        setCurrentFiles(files);
+        setFolders([]);
+      }
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -40,191 +891,591 @@ export default function FormFolder() {
 
   useEffect(() => {
     fetchFolders();
-  }, []);
+  }, [selectedType, folderIdParam]);
 
-  const sortedFolders = [...folders].sort((a, b) =>
-    b.academic_year.localeCompare(a.academic_year),
-  );
+  const explorerItems = useMemo(() => {
+    // 1. Process Folders (Batches or Nested Folders)
+    const folderItems = isImported
+      ? folders.map((f) => ({
+          ...f,
+          id: `batch-${f.academic_year}`,
+          isFolder: true,
+          explorerName: `Batch ${f.academic_year}`,
+          explorerType: "batch",
+        }))
+      : nestedFolders.map((f) => ({
+          ...f,
+          id: f.folder_id,
+          isFolder: true,
+          explorerName: f.name,
+          explorerType: "folder",
+        }));
 
-  const filteredFolders = sortedFolders.filter((f) =>
-    f.academic_year.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+    // 2. Process Files
+    const fileItems = currentFiles.map((f) => ({
+      ...f,
+      id: f.file_id,
+      isFolder: false,
+      explorerName: f.name || f.original_name,
+      explorerType: "file",
+    }));
 
-  const handleCreateFolder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newYear) return;
+    // 3. Combine, Filter by Search, and Sort
+    return [...folderItems, ...fileItems]
+      .filter((item) =>
+        item.explorerName.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+      .sort((a, b) => {
+        // If both items are batches, sort by academic year DESCENDING (Latest first)
+        if (a.explorerType === "batch" && b.explorerType === "batch") {
+          return b.explorerName.localeCompare(a.explorerName);
+        }
 
-    // 1. Show Loading State
-    showAlert.loading("Creating folder...");
+        // Default: Sort everything else alphabetically ASCENDING
+        return a.explorerName.localeCompare(b.explorerName);
+      });
+  }, [folders, nestedFolders, currentFiles, searchTerm, isImported]);
 
-    try {
-      await API.years.create(newYear);
-
-      // 2. Success Alert
-      await showAlert.success(
-        "Created!",
-        `Academic Year ${newYear} is now available.`,
-      );
-
-      setNewYear("");
-      setIsModalOpen(false);
-      fetchFolders();
-    } catch (err: any) {
-      // 3. Error Alert
-      const msg =
-        err.response?.data?.message ||
-        "Failed to create folder. Please try again.";
-      showAlert.error("Oops!", msg);
+  const handleItemClick = (item: any) => {
+    if (item.isFolder) {
+      if (item.explorerType === "batch") {
+        navigate(
+          `/archive/${item.academic_year}?type=${encodeURIComponent(selectedType!)}`,
+        );
+      } else {
+        const newPath = `${selectedType}/${item.explorerName}`;
+        navigate(
+          `/documents?type=${encodeURIComponent(newPath)}&folderId=${item.folder_id}`,
+        );
+      }
+    } else {
+      handleView(item);
     }
   };
 
-  const handleFolderClick = (year: string) => {
-    if (selectedType) {
-      // If we came from the "Document Type" folder, pass the type forward
-      navigate(`/archive/${year}?type=${encodeURIComponent(selectedType)}`);
-    } else {
-      // Default behavior
-      navigate(`/archive/${year}`);
+  const handleView = (item: any) =>
+    window.open(
+      `http://192.168.1.75:5000/api/${item.file_attachment}`,
+      "_blank",
+    );
+
+  const handleDownload = (item: any) => {
+    const link = document.createElement("a");
+    link.href = `http://192.168.1.75:5000/api/${item.file_attachment}`;
+    link.download = item.explorerName;
+    link.click();
+  };
+
+  const handleDelete = async (item: any) => {
+    const result = await showAlert.confirm(
+      "Delete Item?",
+      `This will permanently remove ${item.explorerName}.`,
+    );
+    if (!result.isConfirmed) return;
+    try {
+      showAlert.loading("Processing...");
+      if (item.isFolder) await API.docs.deleteFolder(item.folder_id);
+      else await API.docs.deleteFile(item.file_id);
+      showAlert.success("Deleted", "Item removed successfully.");
+      fetchFolders();
+    } catch (err) {
+      showAlert.error("Error", "Could not delete item.");
     }
+  };
+
+  const onRenameSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!renameValue.trim()) {
+      showAlert.error("Validation Error", "Name cannot be empty.");
+      return;
+    }
+    try {
+      showAlert.loading("Renaming...");
+      if (activeItem.isFolder) {
+        await API.docs.renameFolder(activeItem.folder_id, {
+          name: renameValue,
+        } as any);
+      } else {
+        await API.docs.renameFile(activeItem.file_id, {
+          name: renameValue,
+        } as any);
+      }
+      setIsRenameModalOpen(false);
+      showAlert.success("Success", "Renamed successfully.");
+      fetchFolders();
+    } catch (err) {
+      console.error(err);
+      showAlert.error("Error", "Failed to rename.");
+    }
+  };
+
+  const handleCreateFolder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    showAlert.loading("Creating folder...");
+    try {
+      const rootCategory = selectedType!.split("/")[0];
+      const docRes = await API.docs.getById(rootCategory);
+      if (isImported) await API.years.create(newYear);
+      else {
+        await (folderIdParam
+          ? API.docs.createSubFolder({
+              name: newYear,
+              doctype_id: docRes.data.data.doctype_id,
+              parent_folder_id: folderIdParam,
+            })
+          : API.docs.creatRootFolder({
+              name: newYear,
+              doctype_id: docRes.data.data.doctype_id,
+              parent_folder_id: null,
+            }));
+      }
+      showAlert.success("Success!", "Folder created.");
+      setNewYear("");
+      setIsModalOpen(false);
+      fetchFolders();
+    } catch (err) {
+      showAlert.error("Error", "Failed to create.");
+    }
+  };
+
+  const handleUploadFile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("name", fileName);
+    formData.append("folder_id", folderIdParam!);
+    formData.append("file_attachment", selectedFile!);
+    showAlert.loading("Uploading...");
+    try {
+      await API.docs.uploadToFolder(formData);
+      showAlert.success("Uploaded!", "File saved.");
+      setFileName("");
+      setSelectedFile(null);
+      setIsFileModalOpen(false);
+      fetchFolders();
+    } catch (err) {
+      showAlert.error("Error", "Upload failed.");
+    }
+  };
+
+  const ActionPopover = ({ item }: { item: any }) => {
+    if (openPopoverId !== item.id) return null;
+
+    // Logic: If it's a batch folder (isImported), we don't show any actions.
+    if (item.explorerType === "batch") return null;
+
+    return (
+      <>
+        <div
+          className="fixed inset-0 z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpenPopoverId(null);
+          }}
+        ></div>
+        <div className="absolute right-0 top-10 z-20 w-44 rounded-xl border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900 py-2 overflow-hidden animate-in fade-in zoom-in duration-100">
+          {!item.isFolder && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDownload(item);
+                  setOpenPopoverId(null);
+                }}
+                className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-700 dark:text-gray-200 transition-colors"
+              >
+                <Download size={16} className="text-blue-500" /> Download
+              </button>
+              <div className="h-[1px] bg-gray-100 dark:bg-gray-800 my-1"></div>
+            </>
+          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setActiveItem(item);
+              setRenameValue(item.explorerName);
+              setIsRenameModalOpen(true);
+              setOpenPopoverId(null);
+            }}
+            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-700 dark:text-gray-200 transition-colors"
+          >
+            <Pencil size={16} className="text-blue-500" /> Rename
+          </button>
+
+          {/* Restriction for Interns: Hide delete button */}
+          {userRole !== "Intern" && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(item);
+                setOpenPopoverId(null);
+              }}
+              className="flex w-full items-center gap-3 px-4 py-2.5 text-sm hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 transition-colors"
+            >
+              <Trash2 size={16} /> Delete
+            </button>
+          )}
+        </div>
+      </>
+    );
   };
 
   return (
     <>
-      <PageMeta
-        title="Document Folder"
-        description="Form 137 folders for UEP Student Archives"
-      />
-      <PageBreadcrumb pageTitle="Folders" />
+      <PageMeta title="File Manager" />
+      <PageBreadcrumb pageTitle="Explorer" />
 
-      <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
-        <div className="mx-auto w-full max-w-[630px] text-center mb-10">
-          <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
-            Student Record Archives
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-            Access compiled Form 137 documents organized by academic year. Click
-            a folder to view individual student files.
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row justify-end items-center gap-3 mb-6">
-          <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              placeholder="Search year..."
-              className="w-full rounded-lg border border-gray-200 bg-transparent py-2 pl-4 pr-10 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:text-white"
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+      <div className="rounded-2xl border border-gray-200 bg-white px-5 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center">
+              <button
+                onClick={() => navigate(-1)}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/5"
+              >
+                <ChevronRight className="rotate-180" size={20} />
+              </button>
+              <span className="text-sm font-semibold block lg:hidden sm:block">Back</span>
+            </div>
+            <div className="hidden items-center text-sm font-medium text-gray-400 lg:flex md:hidden">
+              {selectedType?.split("/").map((part, i, arr) => (
+                <React.Fragment key={i}>
+                  <span
+                    className={
+                      i === arr.length - 1
+                        ? "text-gray-800 dark:text-white font-bold"
+                        : ""
+                    }
+                  >
+                    {part}
+                  </span>
+                  {i < arr.length - 1 && (
+                    <ChevronRight size={14} className="mx-1" />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
 
-          {/* {userRole !== "Staff" && (
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={16}
+              />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full sm:w-64 rounded-lg border border-gray-200 bg-transparent py-2 pl-10 pr-4 text-sm dark:border-gray-700 dark:text-white"
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-lg border border-gray-200 dark:border-gray-800">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-1.5 rounded-md transition-all ${viewMode === "grid" ? "bg-white dark:bg-gray-800 shadow-sm text-blue-600" : "text-gray-500"}`}
+              >
+                <LayoutGrid size={18} />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-1.5 rounded-md transition-all ${viewMode === "list" ? "bg-white dark:bg-gray-800 shadow-sm text-blue-600" : "text-gray-500"}`}
+              >
+                <List size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Global Toolbar hidden for Staff and hidden in Import/Batch mode */}
+        {!isImported && userRole !== "Staff" && (
+          <div className="flex gap-2 mb-8">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="w-full sm:w-auto text-sm bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors active:scale-95"
+              className="text-sm bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/10 active:scale-95 hover:-translate-y-0.5"
             >
               <PlusIcon /> New Folder
             </button>
-          )} */}
-          {/* <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full sm:w-auto text-sm bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors active:scale-95"
-          >
-            <PlusIcon /> New Folder
-          </button> */}
-        </div>
-
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-20 space-y-3">
-            <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-gray-500 text-sm">Loading folders...</p>
+            <button
+              onClick={() =>
+                folderIdParam
+                  ? setIsFileModalOpen(true)
+                  : showAlert.error(
+                      "Selection Needed",
+                      "Selection a folder to upload files.",
+                    )
+              }
+              className="text-sm bg-green-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 hover:bg-green-700 transition-all shadow-lg shadow-green-500/10 active:scale-95 hover:-translate-y-0.5"
+            >
+              <FilePlusIcon size={17} /> New File
+            </button>
           </div>
         )}
 
-        {error && <div className="text-center py-10 text-red-500">{error}</div>}
-
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {!loading && filteredFolders.length > 0
-            ? filteredFolders.map((folder) => (
-                <div
-                  key={folder.year_id}
-                  onClick={() => handleFolderClick(folder.academic_year)}
-                  className="group cursor-pointer rounded-xl border border-gray-100 bg-gray-50/50 p-5 transition-all hover:border-blue-200 hover:bg-blue-50/30 dark:border-gray-800 dark:bg-white/[0.02] dark:hover:border-blue-500/30"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="text-blue-500 transition-transform group-hover:scale-110">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-12 w-12"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-32 space-y-4">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+            <p className="text-gray-400 text-sm animate-pulse">
+              Fetching records...
+            </p>
+          </div>
+        ) : explorerItems.length === 0 ? (
+          <div className="py-24 text-center">
+            <div className="bg-gray-50 dark:bg-white/[0.02] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FolderIcon size={40} className="text-gray-200" />
+            </div>
+            <h3 className="text-gray-800 dark:text-white font-medium">
+              No items found
+            </h3>
+          </div>
+        ) : viewMode === "grid" ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            {explorerItems.map((item) => (
+              <div
+                key={item.id}
+                className="group relative rounded-2xl border border-gray-100 bg-white p-4 transition-all hover:border-blue-200 hover:bg-blue-50/20 dark:border-gray-800 dark:bg-white/[0.01] dark:hover:border-blue-500/30 shadow-sm hover:shadow-lg"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div
+                    onClick={() => handleItemClick(item)}
+                    className="cursor-pointer transition-transform group-hover:scale-105 duration-200"
+                  >
+                    {item.isFolder ? (
+                      <FolderIcon
+                        size={54}
+                        className="text-blue-500 fill-blue-500/10"
+                      />
+                    ) : (
+                      <div className="relative">
+                        {getFileIcon(item.file_attachment || item.explorerName)}
+                        <span className="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-md px-1.5 py-0.5 text-[9px] font-bold border border-gray-200 dark:border-gray-700 uppercase shadow-sm">
+                          {item.file_attachment?.split(".").pop() || "file"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Only show popover if it's NOT a batch folder */}
+                  {item.explorerType !== "batch" && (
+                    <div className="relative">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenPopoverId(
+                            openPopoverId === item.id ? null : item.id,
+                          );
+                        }}
+                        className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
                       >
-                        <path d="M19.5 21a3 3 0 0 0 3-3V9a3 3 0 0 0-3-3h-5.379a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H4.5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h15Z" />
-                      </svg>
+                        <MoreVertical size={20} />
+                      </button>
+                      <ActionPopover item={item} />
                     </div>
-                    <span className="rounded-full bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-green-600 shadow-sm dark:bg-gray-800">
-                      Active
-                    </span>
-                  </div>
-                  <div className="mt-4">
-                    <h4 className="text-lg font-bold text-gray-800 dark:text-white/90">
-                      Batch {folder.academic_year}
-                    </h4>
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      Student Records
-                    </p>
-                  </div>
+                  )}
                 </div>
-              ))
-            : !loading && (
-                <div className="col-span-full py-20 text-center text-gray-400">
-                  No folders found.
+                <div
+                  className="cursor-pointer"
+                  onClick={() => handleItemClick(item)}
+                >
+                  <h4
+                    className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate w-full"
+                    title={item.explorerName}
+                  >
+                    {item.explorerName}
+                  </h4>
+                  <p className="mt-1 text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                    {item.isFolder ? "Folder" : "Document"}
+                  </p>
                 </div>
-              )}
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gray-50 dark:bg-white/[0.02] border-b border-gray-200 dark:border-gray-800">
+                <tr>
+                  <th className="px-6 py-4 font-semibold text-gray-500 tracking-wider">
+                    Item Name
+                  </th>
+                  <th className="px-6 py-4 font-bold text-gray-500 tracking-wider text-right">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {explorerItems.map((item) => (
+                  <tr
+                    key={item.id}
+                    className="group hover:bg-blue-50/40 dark:hover:bg-blue-900/10 transition-colors"
+                  >
+                    <td
+                      className="px-6 py-4 flex items-center gap-4 cursor-pointer"
+                      onClick={() => handleItemClick(item)}
+                    >
+                      {item.isFolder ? (
+                        <FolderIcon size={20} className="text-blue-500" />
+                      ) : (
+                        getFileIcon(item.file_attachment)
+                      )}
+                      <span className="font-semibold text-gray-700 dark:text-gray-200">
+                        {item.explorerName}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right relative">
+                      {item.explorerType !== "batch" && (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenPopoverId(
+                                openPopoverId === item.id ? null : item.id,
+                              );
+                            }}
+                            className="p-2.5 hover:bg-gray-100 dark:hover:bg-white/5 rounded-xl transition-colors"
+                          >
+                            <MoreVertical size={18} />
+                          </button>
+                          <ActionPopover item={item} />
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
+
+      {/* Modals */}
+      <Modal
+        isOpen={isRenameModalOpen}
+        onClose={() => setIsRenameModalOpen(false)}
+        className="max-w-[420px] p-8 z-[200]"
+      >
+        <h4 className="text-2xl font-bold mb-2 text-center text-gray-800 dark:text-white">
+          Rename
+        </h4>
+        <form onSubmit={onRenameSubmit} className="space-y-5">
+          <div>
+            <Label>Name</Label>
+            <Input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              required
+              className="mt-1"
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setIsRenameModalOpen(false)}
+              className="flex-1 border border-gray-200 py-2.5 rounded-xl text-sm font-bold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-blue-600 text-white py-2.5 rounded-xl text-sm font-bold"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </Modal>
 
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        className="max-w-[450px] p-6 sm:p-8 z-200"
+        className="max-w-[450px] p-8 z-[200]"
       >
-        <div className="text-center">
-          <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            Create New Folder
-          </h4>
-          <p className="mb-6 text-sm text-gray-500">
-            Enter the academic year to organize incoming documents.
-          </p>
-          <form onSubmit={handleCreateFolder} className="space-y-4">
-            <div className="text-left">
-              <Label>Academic Year</Label>
-              <Input
-                type="text"
-                placeholder="e.g., 2026-2027"
-                value={newYear}
-                onChange={(e) => setNewYear(e.target.value)}
-                className="h-12"
-                required
-              />
-            </div>
+        <h4 className="mb-2 text-2xl font-bold text-center text-gray-800 dark:text-white">
+          {folderIdParam ? "New Sub-folder" : "New Folder"}
+        </h4>
+        <form onSubmit={handleCreateFolder} className="space-y-5">
+          <div>
+            <Label>Folder Name</Label>
+            <Input
+              type="text"
+              value={newYear}
+              onChange={(e) => setNewYear(e.target.value)}
+              placeholder="e.g. 2nd Semester 2024"
+              required
+              className="mt-1"
+            />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="flex-1 rounded-xl border border-gray-200 py-3 text-sm font-bold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 rounded-xl bg-blue-600 text-white py-3 text-sm font-bold"
+            >
+              Create Folder
+            </button>
+          </div>
+        </form>
+      </Modal>
 
-            <div className="flex gap-3 pt-4">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="flex-1 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all active:scale-95"
-              >
-                Create Folder
-              </button>
+      <Modal
+        isOpen={isFileModalOpen}
+        onClose={() => setIsFileModalOpen(false)}
+        className="max-w-[450px] p-8 z-[200]"
+      >
+        <h4 className="mb-2 text-2xl font-bold text-center text-gray-800 dark:text-white">
+          Upload New Item
+        </h4>
+        <form onSubmit={handleUploadFile} className="space-y-5">
+          <div>
+            <Label>Display Name</Label>
+            <Input
+              type="text"
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
+              placeholder="File title..."
+              required
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label>Select File</Label>
+            <div className="mt-2 flex justify-center px-6 pt-8 pb-10 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer bg-gray-50/30">
+              <label className="space-y-2 text-center cursor-pointer w-full">
+                <FileText className="mx-auto h-14 w-14 text-gray-300" />
+                <div className="text-sm text-blue-600 font-bold">
+                  {selectedFile ? selectedFile.name : "Browse Files"}
+                  <input
+                    type="file"
+                    className="sr-only"
+                    onChange={(e) =>
+                      setSelectedFile(e.target.files?.[0] || null)
+                    }
+                    required
+                  />
+                </div>
+              </label>
             </div>
-          </form>
-        </div>
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={() => setIsFileModalOpen(false)}
+              className="flex-1 rounded-xl border border-gray-200 py-3 text-sm font-bold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 rounded-xl bg-green-600 text-white py-3 text-sm font-bold"
+            >
+              Start Upload
+            </button>
+          </div>
+        </form>
       </Modal>
     </>
   );

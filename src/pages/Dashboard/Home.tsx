@@ -172,7 +172,7 @@ const Home = () => {
       />
       <PageBreadcrumb pageTitle="Dashboard" />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
         <DashboardCard
           title="Total Users"
           value={stats.totalUsers}
@@ -198,14 +198,14 @@ const Home = () => {
 
       <div className="relative">
         {/* YEAR SELECTION DROPDOWN */}
-        <div className="absolute top-7 right-6 z-10" ref={dropdownRef}>
+        <div className="absolute top-6 right-6 z-10" ref={dropdownRef}>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center gap-2 bg-gray-50 dark:bg-white/[0.05] border border-gray-200 dark:border-white/10 px-4 py-2 rounded-lg shadow-sm hover:border-blue-400 transition-all"
           >
             <Calendar className="w-4 h-4 text-blue-500" />
             <span className="text-xs font-bold text-slate-700 dark:text-gray-200">
-              Decade:{" "}
+              {/* Decade:{" "} */}
               {yearGroups.find((g) => g.latest === selectedYear)?.label ||
                 "Select Range"}
             </span>
@@ -241,10 +241,10 @@ const Home = () => {
           desc={
             isLoading
               ? "Loading range..."
-              : `Viewing 10-year trend for ${yearGroups.find((g) => g.latest === selectedYear)?.label}`
+              : `School Year ${yearGroups.find((g) => g.latest === selectedYear)?.label}`
           }
         >
-          <div className="h-[380px] w-full pt-2 relative">
+          <div className="h-[380px] w-full pt-2 ml-[-20px] relative">
             {isLoading && (
               <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/40 dark:bg-gray-900/40 backdrop-blur-[1px]">
                 <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />

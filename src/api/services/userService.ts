@@ -22,6 +22,9 @@ export const UserService = {
      */
     create: (data: any) => 
         api.post<ApiResponse<User>>('/users/add', data),
+    
+    register: (data: any) => 
+        api.post<ApiResponse<User>>('/auth/register', data),
 
     /**
      * Update user details and profile image

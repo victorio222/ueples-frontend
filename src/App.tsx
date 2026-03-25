@@ -135,7 +135,7 @@ export default function App() {
 
           <Route element={<PublicRoute />}>
             <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/registration" element={<SignUp />} />
           </Route>
 
           {/* Fallback Route */}

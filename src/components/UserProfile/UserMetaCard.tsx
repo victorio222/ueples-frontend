@@ -999,7 +999,7 @@ export default function UserMetaCard({
       <Modal
         isOpen={profileModal.isOpen}
         onClose={profileModal.closeModal}
-        className="max-w-[700px] m-4 z-99999"
+        className="max-w-[700px] m-4 z-200"
       >
         <div className="relative w-full rounded-3xl bg-white p-6 dark:bg-gray-900 lg:p-11">
           <h4 className="mb-6 text-2xl font-semibold text-gray-800 dark:text-white/90">
@@ -1103,7 +1103,7 @@ export default function UserMetaCard({
                   onChange={(e) =>
                     setFormData({ ...formData, gender: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-800"
+                  className="w-full h-12 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-blue-500 dark:border-gray-700 dark:bg-gray-800"
                 >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>

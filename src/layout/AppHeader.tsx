@@ -49,7 +49,7 @@ const AppHeader: React.FC = () => {
     // >
 
     <header
-      className="sticky top-0 z-50 flex h-16 w-full items-center border-b-4 border-b-orange-400
+      className="sticky top-0 z-40 flex h-16 w-full items-center border-b-4 border-b-orange-400
       /* Light Mode: Yellow Gradient */
       bg-gradient-to-b bg-blue-950
       /* Dark Mode: Solid Deep Gray/Black (Original Theme) */

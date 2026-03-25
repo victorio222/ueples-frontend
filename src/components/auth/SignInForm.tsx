@@ -64,13 +64,30 @@ export default function SignInForm() {
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
-        <div>
+      <div className="flex flex-col justify-center lg:flex-1 w-full max-w-md mx-auto">
+        <div className="mt-15 lg:mt-0">
+          <div className="lg:hidden md:block">
+            <div className="flex flex-col justify-center items-center">
+              <Link to="/" className="block mb-4">
+                <img
+                  width={73}
+                  height={48}
+                  src="/images/logo/uep-logo.png"
+                  alt="Logo"
+                />
+              </Link>
+              <h1 className="mb-2 font-semibold text-center leading-5.5 text-blue-900 dark:text-white/90 sm:text-lg">
+                University of Eastern Philippines <br />
+                Laboratory Elementary School
+              </h1>
+              <div className="w-full border-t border-blue-800 my-5"></div>
+            </div>
+          </div>
           <div className="mb-5 sm:mb-8">
-            <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+            <h1 className="mb-2 font-semibold text-blue-900 text-title-sm dark:text-white/90 sm:text-title-md">
               Login
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-blue-700 dark:text-blue-400">
               Enter your email and password to sign in!
             </p>
           </div>
@@ -83,14 +100,14 @@ export default function SignInForm() {
           )}
 
           <form onSubmit={handleLogin}>
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
                 <Label>
                   Email <span className="text-error-500">*</span>{" "}
                 </Label>
                 <Input
                   type="email"
-                  placeholder="info@gmail.com"
+                  placeholder="info@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -121,18 +138,18 @@ export default function SignInForm() {
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                {/* <div className="flex items-center gap-3">
                   <Checkbox checked={isChecked} onChange={setIsChecked} />
                   <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
                     Keep me logged in
                   </span>
-                </div>
-                <Link
+                </div> */}
+                {/* <Link
                   to="/reset-password"
                   className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
                 >
                   Forgot password?
-                </Link>
+                </Link> */}
               </div>
               <div>
                 <Button
@@ -144,6 +161,13 @@ export default function SignInForm() {
                   {loading ? "Logging in..." : "Login"}
                 </Button>
               </div>
+
+              <Link
+                  to="/registration"
+                  className="text-sm font-medium text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                >
+                  Click here to register
+                </Link>
             </div>
           </form>
         </div>

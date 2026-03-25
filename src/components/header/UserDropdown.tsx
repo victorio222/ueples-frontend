@@ -58,7 +58,7 @@ export default function UserDropdown({ user }: UserDropdownProps) {
         </span>
         <span className="block mr-1 text-gray-200 font-medium text-theme-sm">{`${user.first_name} ${user.last_name}`}</span>
         {/* <span className="block mr-1 text-gray-700 font-medium text-theme-sm">{`${user.first_name} ${user.last_name}`}</span> */}
-        <svg className={`transition-transform ${isOpen ? "rotate-180" : ""}`} width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="currentColor">
+        <svg className={`transition-transform ${isOpen ? "rotate-180" : ""}`} width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="white">
           <path d="M4.3125 8.65625L9 13.3437L13.6875 8.65625" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>

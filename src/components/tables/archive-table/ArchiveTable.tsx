@@ -43,13 +43,13 @@ export default function StudentArchiveTable({
         // Step 1: Fetch documents for the specific year
         const response = await API.docs.getByYear(selectedYear);
         const data = response.data.data || response.data;
-        
-        // Step 2: Filter by Document Type locally 
+
+        // Step 2: Filter by Document Type locally
         // (or you can update your backend to accept a 'type' query param)
         const allDocs = Array.isArray(data) ? data : [];
-        const typeFiltered = selectedType 
-            ? allDocs.filter(doc => doc.type === selectedType)
-            : allDocs;
+        const typeFiltered = selectedType
+          ? allDocs.filter((doc) => doc.type === selectedType)
+          : allDocs;
 
         setDocuments(typeFiltered);
         setError(null);
@@ -91,7 +91,10 @@ export default function StudentArchiveTable({
   });
 
   // --- PAGINATION CALCULATIONS ---
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  // const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const totalPages = filteredData.length > 0 
+  ? Math.ceil(filteredData.length / itemsPerPage) 
+  : 0;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -121,7 +124,8 @@ export default function StudentArchiveTable({
       const pdfHeight = pdfWidth / ratio;
 
       pdf.addImage(img, "JPEG", 0.5, 0.5, pdfWidth, pdfHeight);
-      pdf.save(`Archive_${doc.student?.last_name}_Form137.pdf`);
+      // pdf.save(`Archive_${doc.student?.last_name}_Form137.pdf`);
+      pdf.save(`Archive_${doc.student?.last_name}_${doc.type}.pdf`);
       setIsProcessing(false);
     };
 
@@ -150,7 +154,7 @@ export default function StudentArchiveTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 px-1">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 px-1">
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 dark:text-gray-400 transition-colors"
@@ -357,12 +361,40 @@ export default function StudentArchiveTable({
                   </TableRow>
                 ))
               ) : (
+                // <TableRow>
+                //   <TableCell
+                //     colSpan={5}
+                //     className="px-5 py-10 text-center text-gray-400 text-sm italic"
+                //   >
+                //     {error || `No records found for A.Y. ${selectedYear}`}
+                //   </TableCell>
+                // </TableRow>
+
                 <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="px-5 py-10 text-center text-gray-400 text-sm italic"
-                  >
-                    {error || `No records found for A.Y. ${selectedYear}`}
+                  <TableCell colSpan={5} className="px-5 py-20 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <svg
+                        className="mx-auto h-12 w-12 text-gray-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1"
+                          d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                        />
+                      </svg>
+                      <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                        No documents found
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {searchTerm
+                          ? `No results matching "${searchTerm}"`
+                          : `There are no ${selectedType} records for A.Y. ${selectedYear}.`}
+                      </p>
+                    </div>
                   </TableCell>
                 </TableRow>
               )}
@@ -372,12 +404,26 @@ export default function StudentArchiveTable({
 
         {/* --- PAGINATION FOOTER --- */}
         <div className="flex items-center justify-between border-t border-gray-100 px-5 py-4 dark:border-white/[0.05]">
-          <p className="text-xs text-gray-500">
+          {/* <p className="text-xs text-gray-500">
             Page{" "}
             <span className="font-medium text-gray-700 dark:text-white">
               {currentPage}
             </span>{" "}
             of {totalPages}
+          </p> */}
+
+          <p className="text-xs text-gray-500">
+            {totalPages > 0 ? (
+              <>
+                Page{" "}
+                <span className="font-medium text-gray-700 dark:text-white">
+                  {currentPage}
+                </span>{" "}
+                of {totalPages}
+              </>
+            ) : (
+              "No pages to display"
+            )}
           </p>
 
           <div className="flex items-center gap-1">
@@ -392,7 +438,8 @@ export default function StudentArchiveTable({
 
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
+              // disabled={currentPage === 1}
+              disabled={currentPage === 1 || totalPages === 0}
               className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 dark:border-white/10 dark:hover:bg-white/5 dark:text-white"
             >
               <svg
@@ -411,7 +458,7 @@ export default function StudentArchiveTable({
             </button>
 
             <div className="flex items-center gap-1">
-              {getVisiblePages(totalPages, currentPage).map((page) => (
+              {getVisiblePages(currentPage, totalPages).map((page) => (
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
@@ -428,7 +475,8 @@ export default function StudentArchiveTable({
 
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
+              // disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages === 0}
               className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-30 dark:border-white/10 dark:hover:bg-white/5 dark:text-white"
             >
               <svg

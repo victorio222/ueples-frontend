@@ -68,3 +68,25 @@ export interface Document extends BaseEntity {
   uploader?: User;
   upload? :Document;
 }
+
+export interface DocumentType {
+  type_id: number;
+  name: string;
+  isBatchesImported: boolean;
+}
+export interface SubFolderItem extends BaseEntity {
+  file_id: number;
+  name: string;
+  folder_id: number;
+  file_attachment: string;
+  uploaded_by: number | null;
+}
+
+export interface Folder extends BaseEntity {
+  folder_id: number;
+  name: string;
+  doctype_id: number;
+  parent_folder_id: number | null;
+  items: SubFolderItem[];
+  children: Folder[];
+}

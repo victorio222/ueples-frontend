@@ -38,24 +38,24 @@ const navItems: NavItem[] = [
     name: "Documents",
     path: "/document-types",
   },
-  {
-    icon: <UserIcon />,
-    name: "Student Management",
-    roles: ["Admin", "Principal", "Secretary"],
-    subItems: [
-      { name: "Student List", path: "/students" }, // Viewing/Table/Promotion/Transfer
-      { name: "Register Student", path: "/students/register" }, // Demographic Profiling
-    ],
-  },
-  {
-    icon: <UserCircleIcon />, // Hypothetical icon
-    name: "Faculty Management",
-    roles: ["Admin", "Principal", "Secretary"],
-    subItems: [
-      { name: "Faculty List", path: "/faculty" },
-      { name: "Register Faculty", path: "/faculty/register" },
-    ],
-  },
+  // {
+  //   icon: <UserIcon />,
+  //   name: "Student Management",
+  //   roles: ["Admin", "Principal", "Secretary"],
+  //   subItems: [
+  //     { name: "Student List", path: "/students" }, // Viewing/Table/Promotion/Transfer
+  //     { name: "Register Student", path: "/students/register" }, // Demographic Profiling
+  //   ],
+  // },
+  // {
+  //   icon: <UserCircleIcon />, // Hypothetical icon
+  //   name: "Faculty Management",
+  //   roles: ["Admin", "Principal", "Secretary"],
+  //   subItems: [
+  //     { name: "Faculty List", path: "/faculty" },
+  //     { name: "Register Faculty", path: "/faculty/register" },
+  //   ],
+  // },
   {
     icon: <Import />,
     name: "Import Data",
@@ -75,8 +75,21 @@ const othersItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  // const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+  // const location = useLocation();
+
+  // 1. Ensure you pull the setter from your context
+  const { isExpanded, isMobileOpen, setIsMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+
+  // ... other states
+
+  // 2. Add this Effect to close the sidebar whenever the URL changes
+  useEffect(() => {
+    if (isMobileOpen) {
+      setIsMobileOpen(false);
+    }
+  }, [location.pathname, setIsMobileOpen]);
 
   // Get the role from localStorage
   const userRole = localStorage.getItem("user_role");

@@ -15,7 +15,7 @@ export default function AuthLayout({
           <div className="relative flex items-center justify-center z-1">
             {/* <!-- ===== Common Grid Shape Start ===== --> */}
             <GridShape />
-            <div className="flex flex-col items-center max-w-xs">
+            <div className="flex flex-col items-center max-w-xl">
               <Link to="/" className="block mb-4">
                 <img
                   width={231}
@@ -25,9 +25,9 @@ export default function AuthLayout({
                 />
               </Link>
               <div>
-                <h1 className="text-2xl text-brand-25 text-center font-bold">UEP - STUDENT RECORDS</h1>
+                <h1 className="text-2xl text-brand-25 text-center font-bold">UEPLES - STUDENT RECORDS</h1>
                 <p className="text-lg text-center text-gray-300 dark:text-white/60">
-                  University of Eastern Philippines
+                  University of Eastern Philippines - Laboratory Elementary School
                 </p>
               </div>
             </div>

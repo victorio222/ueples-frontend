@@ -1,5 +1,5 @@
 import api from "../../utils/axiousInstance";
-import { Document } from "../../types/models";
+import { Document, SubFolderItem, Folder } from "../../types/models";
 import { ApiResponse } from "../../types/api";
 
 export const DocumentService = {
@@ -22,12 +22,45 @@ export const DocumentService = {
     >("/documents", { params });
   },
 
+  getById: (doctypeId: string | number) =>
+    api.get<ApiResponse<DocumentType>>(`/documents/type/name/${doctypeId}`),
+
   // getAll: (page = 1, limit = 10) =>
   //     api.get<ApiResponse<Document[]>>(`/documents?page=${page}&limit=${limit}`),
 
   // Get documents by Academic Year ID
   getByYear: (acad_year: string) =>
     api.get<ApiResponse<Document[]>>(`/documents/year/${acad_year}`),
+
+  getFolderTree: (doctypeId: number) =>
+    api.get<ApiResponse<Folder[]>>(`/folders/tree/${doctypeId}`),
+
+  getSubFolders: (parentId: string | number) =>
+    api.get<ApiResponse<Folder[]>>(`/folders/sub/${parentId}`),
+
+  creatRootFolder: (data: Partial<Folder>) =>
+    api.post<ApiResponse<Folder>>("/folders/main", data),
+
+  createSubFolder: (data: Partial<Folder>) =>
+    api.post<ApiResponse<Folder>>("/folders/sub", data),
+
+  renameFolder: (id: number, data: Folder ) =>
+    api.patch<ApiResponse<Folder>>(`/folders/update/${id}`, data),
+
+  renameFile: (id: number, data: Folder ) =>
+    api.patch<ApiResponse<Folder>>(`/uploaded/files/update/${id}`, data),
+  
+  deleteFolder: (id: number) =>
+    api.delete<ApiResponse<Folder>>(`/folders/delete/${id}`),
+
+  // NEW: Upload a file directly into a subfolder
+  uploadToFolder: (formData: FormData) =>
+    api.post<ApiResponse<SubFolderItem>>("/folders/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+
+  getFilesByFolder: (folderId: string | number) =>
+    api.get<ApiResponse<SubFolderItem[]>>(`/uploaded/files/${folderId}`),
 
   // Delete document and trigger file cleanup on backend
   delete: (id: number) => api.delete<ApiResponse<null>>(`/documents/${id}`),

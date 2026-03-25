@@ -135,7 +135,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onFileChange }) =
         <input {...getInputProps()} />
 
         <div className="dz-message flex items-center space-x-1 m-0!">
-          <div>
+          <div className="text-gray-500 dark:text-gray-400">
             <PlusIcon />
           </div>
 
