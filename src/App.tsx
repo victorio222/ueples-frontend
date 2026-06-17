@@ -62,7 +62,7 @@ export default function App() {
 
   // Prevent "flicker" while checking the session
   if (isVerifying) {
-    return <div className="flex h-screen items-center justify-center">Loading Session...</div>;
+    return <div className="flex h-screen items-center justify-center text-white">Loading Session...</div>;
   }
   return (
     <>

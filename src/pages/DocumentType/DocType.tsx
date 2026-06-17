@@ -561,9 +561,10 @@ export default function DocTypeFolder() {
               htmlFor="importBatches"
               className="text-sm text-gray-700 dark:text-gray-300"
             >
-              Import academic batches
+              Import academic batches 
             </label>
           </div>
+          <p className="text-slate-500 text-xs">Note: This will import or generate all academic batches for the new category/folder.</p>
           <div className="flex gap-3">
             <button
               type="button"

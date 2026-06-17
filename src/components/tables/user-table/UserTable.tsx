@@ -101,7 +101,7 @@ export default function BasicTableOne() {
 
     try {
       await UserService.updateStatus(userId, newStatus);
-      toast.success(`User is now ${newStatus}`); // Keeping Toaster for Status
+      toast.success(`User is now ${newStatus}`); 
     } catch (error) {
       setUsers(previousUsers);
       toast.error("Failed to update status");
@@ -362,7 +362,6 @@ export default function BasicTableOne() {
               </svg>
             </button>
 
-            {/* Dynamic Numbered Buttons (Interval of 5) */}
             <div className="flex items-center gap-1">
               {getVisiblePages(totalPages, currentPage).map((page) => (
                 <button
@@ -415,7 +414,7 @@ export default function BasicTableOne() {
 
       {/* Modal Section */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-[50] flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-gray-900 shadow-2xl overflow-hidden">
             <div className="flex items-center justify-between border-b p-6 dark:border-gray-800">
               <h4 className="text-lg font-semibold dark:text-slate-200">Register New User</h4>
@@ -463,7 +462,7 @@ export default function BasicTableOne() {
                 <div className="col-span-1 space-y-1">
                   <Label>System Role</Label>
                   <select
-                    className="text-slate-300 w-full h-11 rounded-lg border px-3 text-sm dark:bg-gray-800 dark:border-gray-700"
+                    className="text-slate-500 w-full h-11 rounded-lg border px-3 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-slate-400"
                     value={formData.role_id}
                     onChange={(e) =>
                       setFormData({ ...formData, role_id: e.target.value })
@@ -481,7 +480,7 @@ export default function BasicTableOne() {
                 <div className="col-span-1 space-y-1">
                   <Label>Initial Status</Label>
                   <select
-                    className="text-slate-300 w-full h-11 rounded-lg border px-3 text-sm dark:bg-gray-800 dark:border-gray-700"
+                    className="text-slate-500 w-full h-11 rounded-lg border px-3 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-slate-400"
                     value={formData.status}
                     onChange={(e) =>
                       setFormData({ ...formData, status: e.target.value })
