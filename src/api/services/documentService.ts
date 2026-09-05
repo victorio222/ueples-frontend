@@ -69,4 +69,6 @@ export const DocumentService = {
     api.get<ApiResponse<DocumentType[]>>("/documents/type"),
 
   delete: (id: number) => api.delete<ApiResponse<null>>(`/documents/${id}`),
+
+  deleteFile: (id: number) => api.delete<ApiResponse<null>>(`/folders/delete/file/${id}`),
 };

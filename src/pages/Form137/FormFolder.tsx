@@ -105,7 +105,9 @@ export default function FormFolder() {
       setLoading(true);
 
       const rootCategory = selectedType.split("/")[0];
+
       const docRes = await API.docs.getById(rootCategory);
+
       const docType = docRes.data.data;
 
       if (!docType) {
@@ -122,6 +124,7 @@ export default function FormFolder() {
         setFolders(yearRes.data.data || []);
         setNestedFolders([]);
         setCurrentFiles([]);
+
       } else {
         let subfolders: Folder[] = [];
         let files: SubFolderItem[] = [];
@@ -134,26 +137,101 @@ export default function FormFolder() {
               .catch(() => null),
           ]);
 
-          subfolders = subRes.data.data || [];
-          files = filesRes?.data.data || [];
+          // Handle API response whether it is:
+          // [ ... ]
+          // or { data: [ ... ] }
+          subfolders = Array.isArray(subRes.data)
+            ? subRes.data
+            : subRes.data?.data || [];
+
+          files = filesRes
+            ? Array.isArray(filesRes.data)
+              ? filesRes.data
+              : filesRes.data?.data || []
+            : [];
+
         } else {
           const treeRes = await API.docs.getFolderTree(
             docType.doctype_id
           );
 
-          subfolders = treeRes.data.data || [];
+          // Your /folders/tree/:id currently returns an array directly
+          subfolders = Array.isArray(treeRes.data)
+            ? treeRes.data
+            : treeRes.data?.data || [];
         }
+
+        console.log("SUBFOLDERS:", subfolders);
+        console.log("FILES:", files);
 
         setNestedFolders(subfolders);
         setCurrentFiles(files);
         setFolders([]);
       }
+
     } catch (err) {
-      console.error(err);
+      console.error("Failed to fetch folders:", err);
     } finally {
       setLoading(false);
     }
   };
+
+  // const fetchFolders = async () => {
+  //   if (!selectedType) return;
+
+  //   try {
+  //     setLoading(true);
+
+  //     const rootCategory = selectedType.split("/")[0];
+  //     const docRes = await API.docs.getById(rootCategory);
+  //     const docType = docRes.data.data;
+
+  //     if (!docType) {
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     const isBatchMode = docType.isBatchesImported;
+  //     setIsImported(isBatchMode);
+
+  //     if (isBatchMode) {
+  //       const yearRes = await API.years.getAll();
+
+  //       setFolders(yearRes.data.data || []);
+  //       setNestedFolders([]);
+  //       setCurrentFiles([]);
+  //     } else {
+  //       let subfolders: Folder[] = [];
+  //       let files: SubFolderItem[] = [];
+
+  //       if (folderIdParam) {
+  //         const [subRes, filesRes] = await Promise.all([
+  //           API.docs.getSubFolders(folderIdParam),
+  //           API.docs
+  //             .getFilesByFolder(folderIdParam)
+  //             .catch(() => null),
+  //         ]);
+
+  //         subfolders = subRes.data.data || [];
+  //         files = filesRes?.data.data || [];
+  //       } else {
+  //         const treeRes = await API.docs.getFolderTree(
+  //           docType.doctype_id
+  //         );
+
+  //         subfolders = treeRes.data.data || [];
+  //       }
+
+  //       setNestedFolders(subfolders);
+  //       setCurrentFiles(files);
+  //       setFolders([]);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // const fetchFolders = async () => {
   //   if (!selectedType) return;
@@ -292,8 +370,12 @@ export default function FormFolder() {
     if (!result.isConfirmed) return;
     try {
       showAlert.loading("Processing...");
-      if (item.isFolder) await API.docs.deleteFolder(item.folder_id);
-      else await API.docs.delete(item.file_id);
+      if (item.isFolder)
+        await API.docs.deleteFolder(item.folder_id);
+      else if (item.isFolder === false)
+        await API.docs.deleteFile(item.file_id);
+      else
+        await API.docs.delete(item.file_id);
       showAlert.success("Deleted", "Item removed successfully.");
       fetchFolders();
     } catch (err) {
