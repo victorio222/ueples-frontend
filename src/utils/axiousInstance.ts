@@ -9,6 +9,15 @@ const api = axios.create({
     },
 });
 
+axios.interceptors.request.use((config) => {
+    const localToken = localStorage.getItem('token');
+    if (localToken) {
+        config.headers.Authorization = `Bearer ${localToken}`;
+    }
+    return config;
+});
+
+
 // api.interceptors.response.use(
 //     (response) => response,
 //     async (error) => {
