@@ -12,17 +12,22 @@ export default function UserProfiles() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchProfile = useCallback(async () => {
-    const userId = localStorage.getItem("user_id")
+    const userId = localStorage.getItem("user_id");
+
+    if (!userId) {
+      toast.error("User ID not found");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      // Assuming you want to fetch user ID 1 (Admin User)
+
       const response = await UserService.getById(Number(userId));
-      
-      // Extract the user object from your ApiResponse structure
-      if (response.data && response.data.data) {
+
+      if (response.data?.data) {
         setUserData(response.data.data);
       } else {
-        // Fallback for different response shapes
         setUserData(response.data);
       }
     } catch (error: any) {
@@ -38,13 +43,13 @@ export default function UserProfiles() {
   }, [fetchProfile, refreshKey]);
 
   const handleUpdate = () => {
-    setRefreshKey((prev) => prev + 1); // Triggers re-fetch
+    setRefreshKey((prev) => prev + 1);
   };
 
   if (loading && !userData) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
       </div>
     );
   }
@@ -55,24 +60,22 @@ export default function UserProfiles() {
         title="Profile | UEP Admin"
         description="User profile management page"
       />
+
       <PageBreadcrumb pageTitle="Profile" />
-      
+
       <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] lg:p-6">
         <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
           Profile
         </h3>
-        
+
         <div className="space-y-6">
-          {/* Main Card: Handles Avatar and Basic Identity */}
-          <UserMetaCard 
-            userData={userData} 
-            onUpdate={handleUpdate} 
+          <UserMetaCard
+            userData={userData}
+            onUpdate={handleUpdate}
           />
-          
-          {/* Info Card: Handles Bio/Personal Details */}
-          <UserInfoCard 
-            userData={userData} 
-            onUpdate={handleUpdate} 
+
+          <UserInfoCard
+            userData={userData}
           />
         </div>
       </div>
