@@ -101,7 +101,7 @@ api.interceptors.response.use((response) => {
 
     return response;
 }, async (error) => {
-    const originalRequest = error.config;
+    // const originalRequest = error.config;
 
     // If both access and refresh tokens are entirely dead (401), boot user to login
     if (error.response?.status === 401) {
