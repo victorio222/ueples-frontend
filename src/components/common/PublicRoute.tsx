@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router";
-import { getCookie } from "../../utils/auth";
+// import { getCookie } from "../../utils/auth";
 
 const PublicRoute = () => {
   const userId = localStorage.getItem("user_id");

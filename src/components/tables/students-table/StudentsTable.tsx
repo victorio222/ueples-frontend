@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../ui/table";
-import Badge from "../../ui/badge/Badge";
 import { 
   Eye, 
   UserPlus, 
@@ -13,7 +12,6 @@ import {
   CheckCircle2,
   X,
   User,
-  Calendar,
   Hash,
   School
 } from "lucide-react";
@@ -38,7 +36,7 @@ const MOCK_STUDENTS: Student[] = [
   { id: 3, lrn: "102938477", first_name: "Ricardo", last_name: "Ramos", grade: 2, section: "A", status: "Active", year: "2024-2025" },
 ];
 
-const ACADEMIC_YEARS = ["2026-2027", "2025-2026", "2024-2025", "2023-2024"];
+// const ACADEMIC_YEARS = ["2026-2027", "2025-2026", "2024-2025", "2023-2024"];
 
 // --- 1. Toast Notification Component ---
 const Toast = ({ message, onClose }: { message: string, onClose: () => void }) => {
