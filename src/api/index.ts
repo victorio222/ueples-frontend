@@ -5,7 +5,6 @@ import { AuthService } from './services/authService';
 import { UserService } from './services/userService';
 import { DashboardService } from './services/dashboardService';
 
-// This is your Global API object
 const API = {
     students: StudentService,
     years: AcademicYearService,

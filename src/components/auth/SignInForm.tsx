@@ -1,18 +1,17 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router"; // Use useNavigate for redirection
+import { Link, useNavigate } from "react-router"; 
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
-import API from "../../api"; // Your Global API access point
+import API from "../../api";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
-  // 1. Form State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,7 +29,7 @@ export default function SignInForm() {
         const userData = response.data.data;
 
         console.log(userData?.status);
-        // 1. Check if user is blocked/inactive first
+        // Check if user is blocked/inactive first
         if (userData?.status?.toLowerCase() === "inactive") {
           setError(
             "Your account is currently inactive. Please contact the administrator.",
@@ -38,16 +37,10 @@ export default function SignInForm() {
           return; // Stop execution here
         }
 
-        // 2. Proceed if user is active and data exists
+        // Proceed if user is active and data exists
         if (userData) {
           localStorage.setItem("user_id", userData.user_id.toString());
           localStorage.setItem("user_role", userData.role.toString());
-
-          // document.cookie = `user_id=${userData.user_id}; path=/; SameSite=Lax;`;
-          // document.cookie = `user_role=${userData.role}; path=/; SameSite=Lax;`;
-
-          // Optional: Save name or email for a better UX
-          // localStorage.setItem("user_name", userData.first_name);
 
           navigate("/");
         }
@@ -91,8 +84,7 @@ export default function SignInForm() {
               Enter your email and password to sign in!
             </p>
           </div>
-
-          {/* 3. Error Alert */}
+          
           {error && (
             <div className="p-3 mb-4 text-sm text-red-600 bg-red-100 rounded-lg dark:bg-red-900/30 dark:text-red-400">
               {error}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import Label from "../Label";
 import Button from "../../ui/button/Button";
-import { PaperPlaneIcon, PlusIcon, TrashIcon } from "../../../icons"; // Assuming you have these
+import { PaperPlaneIcon, PlusIcon, TrashIcon } from "../../../icons";
 import api from "../../../utils/axiousInstance";
 import ReactSelect from "react-select";
 import { showAlert } from "../../../utils/toaster";

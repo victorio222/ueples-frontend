@@ -3,7 +3,6 @@ import { Document, SubFolderItem, Folder } from "../../types/models";
 import { ApiResponse } from "../../types/api";
 
 export const DocumentService = {
-  // Upload a new file
   upload: (formData: FormData) =>
     api.post<ApiResponse<Document>>("/documents/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -11,7 +10,7 @@ export const DocumentService = {
 
   getAll: (page = 1, limit = 10, lrn?: string | null) => {
     const params: any = { page, limit };
-    if (lrn) params.lrn = lrn; // Append LRN to query string if present
+    if (lrn) params.lrn = lrn;
 
     return api.get<
       ApiResponse<{
@@ -25,10 +24,6 @@ export const DocumentService = {
   getById: (doctypeId: string | number) =>
     api.get<ApiResponse<DocumentType>>(`/documents/type/name/${doctypeId}`),
 
-  // getAll: (page = 1, limit = 10) =>
-  //     api.get<ApiResponse<Document[]>>(`/documents?page=${page}&limit=${limit}`),
-
-  // Get documents by Academic Year ID
   getByYear: (acad_year: string) =>
     api.get<ApiResponse<Document[]>>(`/documents/year/${acad_year}`),
 
@@ -53,7 +48,6 @@ export const DocumentService = {
   deleteFolder: (id: number) =>
     api.delete<ApiResponse<Folder>>(`/folders/delete/${id}`),
 
-  // NEW: Upload a file directly into a subfolder
   uploadToFolder: (formData: FormData) =>
     api.post<ApiResponse<SubFolderItem>>("/folders/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -62,6 +56,5 @@ export const DocumentService = {
   getFilesByFolder: (folderId: string | number) =>
     api.get<ApiResponse<SubFolderItem[]>>(`/uploaded/files/${folderId}`),
 
-  // Delete document and trigger file cleanup on backend
   delete: (id: number) => api.delete<ApiResponse<null>>(`/documents/${id}`),
 };

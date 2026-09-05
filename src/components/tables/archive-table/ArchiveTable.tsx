@@ -11,11 +11,11 @@ import Badge from "../../ui/badge/Badge";
 import API from "../../../api";
 import { Document } from "../../../types/models";
 import { getVisiblePages } from "../../../utils/paginationHelper";
-import { jsPDF } from "jspdf"; // Required: npm install jspdf
+import { jsPDF } from "jspdf";
 
 interface StudentArchiveTableProps {
   selectedYear: string;
-  selectedType: string; // Add this
+  selectedType: string;
 }
 
 export default function StudentArchiveTable({
@@ -27,9 +27,8 @@ export default function StudentArchiveTable({
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false); // New: Processing state for PDF
+  const [isProcessing, setIsProcessing] = useState(false); 
 
-  // --- PAGINATION STATE ---
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -40,12 +39,10 @@ export default function StudentArchiveTable({
       if (!selectedYear) return;
       try {
         setLoading(true);
-        // Step 1: Fetch documents for the specific year
+        
         const response = await API.docs.getByYear(selectedYear);
         const data = response.data.data || response.data;
 
-        // Step 2: Filter by Document Type locally
-        // (or you can update your backend to accept a 'type' query param)
         const allDocs = Array.isArray(data) ? data : [];
         const typeFiltered = selectedType
           ? allDocs.filter((doc) => doc.type === selectedType)
@@ -62,24 +59,6 @@ export default function StudentArchiveTable({
     fetchDocs();
   }, [selectedYear, selectedType]);
 
-  // useEffect(() => {
-  //   const fetchDocs = async () => {
-  //     if (!selectedYear) return;
-  //     try {
-  //       setLoading(true);
-  //       const response = await API.docs.getByYear(selectedYear);
-  //       const data = response.data.data || response.data;
-  //       setDocuments(Array.isArray(data) ? data : []);
-  //       setError(null);
-  //     } catch (err: any) {
-  //       setError("Failed to load student documents.");
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchDocs();
-  // }, [selectedYear]);
-
   // Filter logic
   const filteredData = documents.filter((doc) => {
     const studentName =
@@ -90,8 +69,6 @@ export default function StudentArchiveTable({
     );
   });
 
-  // --- PAGINATION CALCULATIONS ---
-  // const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const totalPages = filteredData.length > 0 
   ? Math.ceil(filteredData.length / itemsPerPage) 
   : 0;
@@ -99,13 +76,11 @@ export default function StudentArchiveTable({
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Reset to page 1 when searching
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
 
-  // --- FEATURE: DOWNLOAD IMAGE AS PDF ---
   const handleDownloadPDF = (doc: Document) => {
     setIsProcessing(true);
     const imageUrl = `${API_BASE_URL}/${doc.attachment.replace(/\\/g, "/")}`;
@@ -135,7 +110,7 @@ export default function StudentArchiveTable({
     };
   };
 
-  // --- FEATURE: PRINT IMAGE ---
+  // Print image
   const handlePrint = (path: string) => {
     const imageUrl = `${API_BASE_URL}/${path.replace(/\\/g, "/")}`;
     const printWindow = window.open("", "_blank");
@@ -187,7 +162,6 @@ export default function StudentArchiveTable({
       </div>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] relative">
-        {/* Processing Loader */}
         {isProcessing && (
           <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/60 dark:bg-black/60 backdrop-blur-[2px]">
             <div className="flex flex-col items-center gap-2">
@@ -227,7 +201,6 @@ export default function StudentArchiveTable({
                 >
                   Date Uploaded
                 </TableCell>
-                {/* ACTIONS HEADER CENTERED */}
                 <TableCell
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs uppercase"
@@ -361,14 +334,6 @@ export default function StudentArchiveTable({
                   </TableRow>
                 ))
               ) : (
-                // <TableRow>
-                //   <TableCell
-                //     colSpan={5}
-                //     className="px-5 py-10 text-center text-gray-400 text-sm italic"
-                //   >
-                //     {error || `No records found for A.Y. ${selectedYear}`}
-                //   </TableCell>
-                // </TableRow>
 
                 <TableRow>
                   <TableCell colSpan={5} className="px-5 py-20 text-center">
@@ -402,16 +367,7 @@ export default function StudentArchiveTable({
           </Table>
         </div>
 
-        {/* --- PAGINATION FOOTER --- */}
         <div className="flex items-center justify-between border-t border-gray-100 px-5 py-4 dark:border-white/[0.05]">
-          {/* <p className="text-xs text-gray-500">
-            Page{" "}
-            <span className="font-medium text-gray-700 dark:text-white">
-              {currentPage}
-            </span>{" "}
-            of {totalPages}
-          </p> */}
-
           <p className="text-xs text-gray-500">
             {totalPages > 0 ? (
               <>

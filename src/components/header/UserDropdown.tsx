@@ -7,7 +7,7 @@ import API from "../../api";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface UserDropdownProps {
-  user: any; // Accepts the JSON object from your API
+  user: any;
 }
 
 export default function UserDropdown({ user }: UserDropdownProps) {
@@ -32,16 +32,14 @@ export default function UserDropdown({ user }: UserDropdownProps) {
 
   const handleLogout = async () => {
     try {
-      // 1. Call the Backend to clear HttpOnly cookies
+      // Call the Backend to clear HttpOnly cookies
       await API.auth.logout(user.email);
     } catch (error) {
       console.error("Logout failed", error);
     } finally {
-      // 2. Clear local tracking data
       localStorage.removeItem('user_id');
       localStorage.removeItem('user_role');
       
-      // 3. Redirect to login
       navigate("/signin");
     }
   };

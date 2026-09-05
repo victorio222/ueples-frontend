@@ -3,30 +3,28 @@ import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { PlusIcon } from "../../../icons";
 
-// 1. Define the Props Interface
 interface DropzoneComponentProps {
   onFileChange: (file: File) => void;
 }
 
 const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ onFileChange }) => {
   
-  // 2. Updated onDrop to "lift" the file up to the parent state
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       console.log("Files dropped:", acceptedFiles);
-      onFileChange(acceptedFiles[0]); // Send the first file to DefaultInputs.tsx
+      onFileChange(acceptedFiles[0]); 
     }
   }, [onFileChange]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: false, // Usually best for single document uploads
+    multiple: false, 
     accept: {
       "image/png": [],
       "image/jpeg": [],
       "image/webp": [],
       "image/svg+xml": [],
-      "application/pdf": [], // Added PDF support since these are student records
+      "application/pdf": [],
     },
   });
 

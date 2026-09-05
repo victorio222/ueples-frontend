@@ -322,7 +322,6 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   
-  // State to hold the integer ID for the intern role
   const [internRoleId, setInternRoleId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
@@ -333,18 +332,15 @@ export default function SignUpForm() {
     middle_name: "", 
     suffix_name: "", 
     status: "Active",
-    role_id: "", // This will be populated by the fetch
+    role_id: "",
   });
 
-  // --- FETCH ROLES ON MOUNT ---
   useEffect(() => {
     const fetchRoles = async () => {
       try {
         const res = await UserService.getRoles();
-        // Assuming your API response structure is { data: { data: [...] } }
         const roleData = res.data.data || [];
         
-        // Find the role where name is "Intern" (case-insensitive)
         const internRole = roleData.find(
           (r: any) => r.role_name.toLowerCase() === "intern"
         );
@@ -399,13 +395,6 @@ export default function SignUpForm() {
 
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
-      {/* <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
-        <Link to="/" className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400">
-          <ChevronLeftIcon className="size-5" />
-          Back to dashboard
-        </Link>
-      </div> */}
-
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div className="mb-5 sm:mb-8">
           <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
@@ -417,7 +406,6 @@ export default function SignUpForm() {
         </div>
 
         <form onSubmit={handleRegister} className="space-y-5">
-          {/* Hidden Role Input using the fetched ID */}
           <input type="hidden" name="role_id" value={formData.role_id} />
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">

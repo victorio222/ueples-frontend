@@ -2,7 +2,6 @@ import api from '../../utils/axiousInstance';
 import { User } from '../../types/models';
 import { ApiResponse } from '../../types/api';
 
-// Define the credentials type
 export interface LoginCredentials {
   email: string;
   password?: string;
