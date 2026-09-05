@@ -70,7 +70,7 @@ export interface Document extends BaseEntity {
 }
 
 export interface DocumentType {
-  type_id: number;
+  doctype_id: number;
   name: string;
   isBatchesImported: boolean;
 }

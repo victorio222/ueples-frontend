@@ -1,5 +1,5 @@
 import api from "../../utils/axiousInstance";
-import { Document, SubFolderItem, Folder } from "../../types/models";
+import { Document, DocumentType, SubFolderItem, Folder } from "../../types/models";
 import { ApiResponse } from "../../types/api";
 
 export const DocumentService = {
@@ -39,12 +39,12 @@ export const DocumentService = {
   createSubFolder: (data: Partial<Folder>) =>
     api.post<ApiResponse<Folder>>("/folders/sub", data),
 
-  renameFolder: (id: number, data: Folder ) =>
+  renameFolder: (id: number, data: { name: string }) =>
     api.patch<ApiResponse<Folder>>(`/folders/update/${id}`, data),
 
-  renameFile: (id: number, data: Folder ) =>
+  renameFile: (id: number, data: { name: string }) =>
     api.patch<ApiResponse<Folder>>(`/uploaded/files/update/${id}`, data),
-  
+
   deleteFolder: (id: number) =>
     api.delete<ApiResponse<Folder>>(`/folders/delete/${id}`),
 
@@ -55,6 +55,9 @@ export const DocumentService = {
 
   getFilesByFolder: (folderId: string | number) =>
     api.get<ApiResponse<SubFolderItem[]>>(`/uploaded/files/${folderId}`),
+
+  getTypes: () =>
+    api.get<ApiResponse<DocumentType[]>>("/documents/type"),
 
   delete: (id: number) => api.delete<ApiResponse<null>>(`/documents/${id}`),
 };
