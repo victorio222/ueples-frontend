@@ -22,7 +22,7 @@ export default function RecentUploadsTable() {
   const [_, setTotalItems] = useState(0);
   const pageSize = 10;
 
-  const API_BASE_URL = import.meta.env.API_BASE_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   const fetchRecentFiles = useCallback(async (page: number, lrnFilter: string | null) => {
     try {

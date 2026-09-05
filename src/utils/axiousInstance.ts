@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     // Use the .env variable for your laptop .202 IP
-    baseURL: import.meta.env.API_BASE_URL,
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     withCredentials: true, // Required to send/receive HttpOnly cookies across IPs
     headers: {
         'Content-Type': 'application/json',

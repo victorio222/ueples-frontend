@@ -273,13 +273,13 @@ export default function FormFolder() {
 
   const handleView = (item: any) =>
     window.open(
-      `${import.meta.env.API_BASE_URL}/${item.file_attachment}`,
+      `${import.meta.env.VITE_API_BASE_URL}/${item.file_attachment}`,
       "_blank",
     );
 
   const handleDownload = (item: any) => {
     const link = document.createElement("a");
-    link.href = `${import.meta.env.API_BASE_URL}/${item.file_attachment}`;
+    link.href = `${import.meta.env.VITE_API_BASE_URL}/${item.file_attachment}`;
     link.download = item.explorerName;
     link.click();
   };
