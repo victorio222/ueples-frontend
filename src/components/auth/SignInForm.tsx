@@ -12,8 +12,8 @@ export default function SignInForm() {
   // const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@uep.edu.ph");
+  const [password, setPassword] = useState("password123");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
