@@ -12,6 +12,9 @@ import InputStates from "../../components/form/form-elements/InputStates";
 import PageMeta from "../../components/common/PageMeta";
 
 export default function FormElements() {
+  const handleFileChange = (file: File) => {
+    console.log("Selected file:", file);
+  };
   return (
     <div>
       <PageMeta
@@ -32,7 +35,7 @@ export default function FormElements() {
           <CheckboxComponents />
           <RadioButtons />
           <ToggleSwitch />
-          <DropzoneComponent />
+          <DropzoneComponent onFileChange={handleFileChange} />
         </div>
       </div>
     </div>

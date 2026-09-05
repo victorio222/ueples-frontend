@@ -1,4 +1,3 @@
-import { PlusCircle } from "lucide-react";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import { PlusIcon } from "../../../icons";
