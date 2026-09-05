@@ -16,14 +16,13 @@ export default function UserInfoCard({
               <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
                 Full Name
               </p>
-
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {userData?.first_name
                   ? `${userData.first_name} ${
                       userData.middle_name || ""
                     } ${userData.last_name} ${
                       userData.suffix_name || ""
-                    }`.replace(/\s+/g, " ").trim()
+                    }`.trim()
                   : "N/A"}
               </p>
             </div>
@@ -32,7 +31,6 @@ export default function UserInfoCard({
               <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
                 Gender
               </p>
-
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {userData?.gender || "N/A"}
               </p>
@@ -40,9 +38,8 @@ export default function UserInfoCard({
 
             <div>
               <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
-                Email address
+                Email Address
               </p>
-
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {userData?.email || "N/A"}
               </p>
@@ -52,7 +49,6 @@ export default function UserInfoCard({
               <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
                 Phone
               </p>
-
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                 {userData?.phone_number || "N/A"}
               </p>
@@ -62,4 +58,4 @@ export default function UserInfoCard({
       </div>
     </div>
   );
-}
+};
