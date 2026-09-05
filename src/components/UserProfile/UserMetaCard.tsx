@@ -7,7 +7,7 @@ import Label from "../form/Label";
 import { UserService } from "../../api/services/userService";
 import { toast } from "react-hot-toast";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.API_BASE_URL;
 
 export default function UserMetaCard({
   userData,
