@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import API from "../../api";
@@ -7,7 +7,7 @@ import API from "../../api";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface UserDropdownProps {
-  user: any;
+  user?: any;
 }
 
 export default function UserDropdown({ user }: UserDropdownProps) {

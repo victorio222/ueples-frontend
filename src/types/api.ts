@@ -2,7 +2,7 @@
 export interface ApiResponse<T> {
   status: 'success' | 'fail' | 'error';
   message?: string;
-  data?: T;
+  data: T;
   // For paginated results
   totalItems?: number;
   totalPages?: number;

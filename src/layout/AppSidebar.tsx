@@ -3,16 +3,14 @@ import { Link, useLocation } from "react-router";
 import {
   ChevronDownIcon,
   DocsIcon,
-  DownloadIcon,
+  // DownloadIcon,
   FolderIcon,
   GridIcon,
   HorizontaLDots,
-  UserCircleIcon,
   UserIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import { Import } from "lucide-react";
-import { getCookie } from "../utils/auth";
 
 type NavItem = {
   name: string;

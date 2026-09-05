@@ -2,9 +2,9 @@ import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import Label from "../Label";
 import Button from "../../ui/button/Button";
-import { PaperPlaneIcon, PlusIcon, TrashIcon } from "../../../icons";
+import { PaperPlaneIcon, PlusIcon } from "../../../icons";
 import api from "../../../utils/axiousInstance";
-import ReactSelect from "react-select";
+// import ReactSelect from "react-select";
 import { showAlert } from "../../../utils/toaster";
 
 export default function FacultyProfileRegistration() {
@@ -109,7 +109,7 @@ export default function FacultyProfileRegistration() {
                 </tr>
               </thead>
               <tbody className="divide-y dark:divide-gray-800">
-                {Object.entries(education).map(([key, value]) => (
+                {Object.entries(education).map(([key]) => (
                   <tr key={key}>
                     <td className="py-3 text-sm capitalize font-medium">{key.replace('_', ' ')}</td>
                     <td><input onChange={(e) => handleEduChange(key, 'school', e.target.value)} className={`${inputClass} border-none`} placeholder="School Name" /></td>
@@ -139,7 +139,7 @@ export default function FacultyProfileRegistration() {
                 </tr>
               </thead>
               <tbody>
-                {trainings.map((t, idx) => (
+                {trainings.map((_, idx) => (
                   <tr key={idx} className="border-t dark:border-gray-800">
                     <td className="p-1"><input onChange={(e) => handleTrainingChange(idx, 'title', e.target.value)} className="w-full bg-transparent p-2 outline-none" /></td>
                     <td className="p-1"><input onChange={(e) => handleTrainingChange(idx, 'duration_venue', e.target.value)} className="w-full bg-transparent p-2 outline-none" /></td>

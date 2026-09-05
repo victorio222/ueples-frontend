@@ -1,4 +1,4 @@
-import React, {
+import {
   useState,
   useMemo,
   useRef,
@@ -18,7 +18,6 @@ import {
   Users,
   FileUp,
   GraduationCap,
-  Search,
   Loader2,
   Calendar,
 } from "lucide-react";

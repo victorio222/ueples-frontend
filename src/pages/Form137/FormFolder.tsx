@@ -21,7 +21,6 @@ import {
   Pencil,
   Trash2,
   Download,
-  Eye,
   FileCode,
   FileArchive,
   FileAudio,

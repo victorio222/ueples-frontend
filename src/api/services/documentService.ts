@@ -9,8 +9,17 @@ export const DocumentService = {
     }),
 
   getAll: (page = 1, limit = 10, lrn?: string | null) => {
-    const params: any = { page, limit };
-    if (lrn) params.lrn = lrn;
+    // const params: any = { page, limit };
+    // if (lrn) params.lrn = lrn;
+
+    const params: Record<string, string | number> = {
+      page,
+      limit,
+    };
+
+    if (lrn) {
+      params.lrn = lrn;
+    }
 
     return api.get<
       ApiResponse<{

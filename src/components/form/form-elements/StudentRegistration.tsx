@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import Label from "../Label";
 import Button from "../../ui/button/Button";

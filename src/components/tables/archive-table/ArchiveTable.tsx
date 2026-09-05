@@ -26,7 +26,6 @@ export default function StudentArchiveTable({
   const [searchTerm, setSearchTerm] = useState("");
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false); 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,9 +48,9 @@ export default function StudentArchiveTable({
           : allDocs;
 
         setDocuments(typeFiltered);
-        setError(null);
+        console.error(null);
       } catch (err: any) {
-        setError("Failed to load student documents.");
+        console.error("Failed to load student documents.");
       } finally {
         setLoading(false);
       }

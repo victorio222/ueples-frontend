@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ export default function RecentUploadsTable() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
+  const [_, setTotalItems] = useState(0);
   const pageSize = 10;
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -29,10 +29,10 @@ export default function RecentUploadsTable() {
       setLoading(true);
       const response = await DocumentService.getAll(page, pageSize, lrnFilter); 
       
-      const { documents, totalPages, totalItems } = response.data;
+      const { documents, totalPages, totalItems } = response.data.data;
       setUploads(documents || []);
       setTotalPages(totalPages || 1);
-      setTotalItems(totalItems || 0);
+      setTotalItems(totalItems);
     } catch (error) {
       console.error("Error loading recent uploads:", error);
     } finally {

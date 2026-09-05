@@ -24,7 +24,7 @@ export default function DefaultInputs() {
   const [fetching, setFetching] = useState(false);
 
   const [lockOwner, setLockOwner] = useState<string | null>(null);
-  const lockInterval = useRef<NodeJS.Timeout | null>(null);
+  const lockInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const [documentTypes, setDocumentTypes] = useState<string[]>([]);
   const [docStates, setDocStates] = useState<FileState>({});
